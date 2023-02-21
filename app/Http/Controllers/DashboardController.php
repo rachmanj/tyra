@@ -17,11 +17,13 @@ class DashboardController extends Controller
 
     public function getCountByProjects()
     {
-        // make query that return count of records by status of every project_code
-        $project_codes = \App\Models\HazardReport::select('project_code')->distinct()->get();
+        $projects = HazardReport::select('project_code')->distinct()->get()->pluck('project_code')->toArray();
+        $statuses = ['pending', 'closed'];
         $project_codes_count = [];
-        foreach ($project_codes as $project_code) {
-            $project_codes_count[$project_code->project_code] = \App\Models\HazardReport::selectRaw('status, count(*) as count')->where('project_code', $project_code->project_code)->groupBy('status')->get();
+        foreach ($projects as $project) {
+            foreach ($statuses as $status) {
+                $project_codes_count[$project][$status] = \App\Models\HazardReport::where('project_code', $project)->where('status', $status)->count();
+            }
         }
 
         return $project_codes_count;
@@ -40,6 +42,15 @@ class DashboardController extends Controller
 
     public function test()
     {
-        return $this->count_by_danger_type();
+        $projects = HazardReport::select('project_code')->distinct()->get()->pluck('project_code')->toArray();
+        $statuses = ['pending', 'closed'];
+        $project_codes_count = [];
+        foreach ($projects as $project) {
+            foreach ($statuses as $status) {
+                $project_codes_count[$project][$status] = \App\Models\HazardReport::where('project_code', $project)->where('status', $status)->count();
+            }
+        }
+
+        return $project_codes_count;
     }
 }

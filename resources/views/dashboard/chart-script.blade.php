@@ -13,11 +13,10 @@
         let hazards = {!! json_encode($hazard_by_project) !!};
         var projects = Object.keys(hazards);
         
-        var pendingHazard = Object.values(hazards).flatMap(arr => arr.filter(obj => obj.status === "pending"));
-        var pendingCount = pendingHazard.map(obj => obj.count);
+        // make array of pending hazard
+        const pendingArray = Object.entries(hazards).map(([key, value]) => value.pending);
 
-        var closedHazard = Object.values(hazards).flatMap(arr => arr.filter(obj => obj.status === "closed"));
-        var closedCount = closedHazard.map(obj => obj.count);
+        const closedArray = Object.entries(hazards).map(([key, value]) => value.closed);
 
         // BAR CHART OF HAZARD REPORT BY PROJECT
         var hazardChart1 = $('#hazard-chart')
@@ -30,12 +29,12 @@
             {
               backgroundColor: '#007bff',
               borderColor: '#007bff',
-              data: pendingCount
+              data: pendingArray
             },
             {
               backgroundColor: '#ced4da',
               borderColor: '#ced4da',
-              data: closedCount
+              data: closedArray
         }
           ]
         },
