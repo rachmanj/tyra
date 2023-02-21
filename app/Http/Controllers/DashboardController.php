@@ -32,7 +32,7 @@ class DashboardController extends Controller
         // group by danger_type_id and count replace danger_type_id with danger_type_name
         $danger_types = HazardReport::selectRaw('danger_type_id, count(*) as count')->groupBy('danger_type_id')->get();
         $danger_types->map(function ($item) {
-            $item->danger_type_id = \App\Models\HazardReport::find($item->danger_type_id)->danger_type->name;
+            $item->danger_type_id = \App\Models\DangerType::find($item->danger_type_id)->name;
         });
 
         return $danger_types;
