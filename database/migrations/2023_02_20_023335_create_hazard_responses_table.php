@@ -1,0 +1,31 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('hazard_responses', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('hazard_report_id');
+            $table->foreignId('comment_by');
+            $table->text('comment')->nullable();
+            $table->string('filename')->nullable();
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('hazard_responses');
+    }
+};
