@@ -130,14 +130,13 @@
                
 
                 <div class="card-header">
-                  <div class="card-title">Attachment</div>
-                  <button type="button" id="add_row" class="btn btn-sm btn-primary float-right">Add row</button>
+                  <button type="button" id="add_row" class="btn btn-sm btn-primary">Add more attachment</button>
                 </div>
                 <div class="card-body">
                    <table class="table">
                     <thead>
                       <tr>
-                        <th>File</th>
+                        <th>Attachment</th>
                         <th>Action</th>
                       </tr>
                     </thead>
@@ -147,13 +146,13 @@
                           <input type="file" name="file_upload[]" id="file" class="form-control">
                         </td>
                         <td>
-                          <button class="btn btn-sm btn-danger remove_row"><i class="fas fa-trash"></i></button>
+                          <button class="btn btn-xs btn-danger remove_row">delete</button>
                         </td>
                       </tr>
                     </tbody>
                     </table>
                     <div class="card-footer">
-                      <button type="submit" class="btn btn-primary">Submit</button>
+                      <button type="submit" class="btn btn-success btn-block">Submit</button>
                     </div>
                   </form>
                 </div>
@@ -170,7 +169,7 @@
           var html = '';
           html += '<tr>';
           html += '<td><input type="file" name="file_upload[]" id="file" class="form-control"></td>';
-          html += '<td><button class="btn btn-sm btn-danger remove_row"><i class="fas fa-trash"></i></button></td>';
+          html += '<td><button class="btn btn-xs btn-danger remove_row">delete</button></td>';
           html += '</tr>';
           $('#attachment_table').append(html);
         });
