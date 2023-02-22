@@ -24,7 +24,7 @@
                         <div class="row">
                             <div class="col-6">
                                 <div class="form-group">
-                                    <label for="nomor">Report No <small>(Automatic)</small></label>
+                                    <label for="nomor">Report No <small>(Nomor will change according torecent data)</small></label>
                                     <input name="nomor" id="nomor" value="{{ $nomor }}" class="form-control @error('nomor') is-invalid @enderror" disabled>
                                     @error('nomor')
                                       <div class="invalid-feedback">
@@ -127,12 +127,57 @@
                       
                     </div> <!-- /.card-body -->
 
-                    <div class="card-footer">
-                        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-envelope"></i> Save</button>
-                    </div>
+               
 
-                </form>
+                <div class="card-header">
+                  <div class="card-title">Attachment</div>
+                  <button type="button" id="add_row" class="btn btn-sm btn-primary float-right">Add row</button>
+                </div>
+                <div class="card-body">
+                   <table class="table">
+                    <thead>
+                      <tr>
+                        <th>File</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="attachment_table">
+                      <tr>
+                        <td>
+                          <input type="file" name="file_upload[]" id="file" class="form-control">
+                        </td>
+                        <td>
+                          <button class="btn btn-sm btn-danger remove_row"><i class="fas fa-trash"></i></button>
+                        </td>
+                      </tr>
+                    </tbody>
+                    </table>
+                    <div class="card-footer">
+                      <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                  </form>
+                </div>
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script>
+      $(document).ready(function() {
+        // when add row button clicked
+        $(document).on('click', '#add_row', function() {
+          var html = '';
+          html += '<tr>';
+          html += '<td><input type="file" name="file_upload[]" id="file" class="form-control"></td>';
+          html += '<td><button class="btn btn-sm btn-danger remove_row"><i class="fas fa-trash"></i></button></td>';
+          html += '</tr>';
+          $('#attachment_table').append(html);
+        });
+
+        $(document).on('click', '.remove_row', function() {
+          $(this).closest('tr').remove();
+        });
+      });
+    </script>
 @endsection

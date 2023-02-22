@@ -1,1 +1,1 @@
-<a href="{{ route('hazard-rpt.closed_show', $model->id) }}" class="btn btn-info btn-xs"> show</a>
+<a href="{{ route('hazard-rpt.show_closed', $model->id) }}" class="btn btn-info btn-xs"> show</a>

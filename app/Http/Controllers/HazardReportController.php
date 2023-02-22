@@ -6,6 +6,7 @@ use App\Models\DangerType;
 use App\Models\Department;
 use App\Models\HazardReport;
 use App\Models\ReportAttachment;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -22,7 +23,7 @@ class HazardReportController extends Controller
         $departments = Department::orderBy('department_name', 'asc')->get();
         $danger_types = DangerType::orderBy('name', 'asc')->get();
         $date_time = Carbon::now()->addHours(8)->format('d M Y H:i:s');
-        $nomor = 'H' . Carbon::now()->addHours(8)->format('y') . '-' . str_pad(HazardReport::count() + 1, 3, '0', STR_PAD_LEFT);
+        $nomor = Carbon::now()->addHours(8)->format('y') . '/SHE/' . auth()->user()->project . '/' . str_pad(HazardReport::count() + 1, 3, '0', STR_PAD_LEFT);
 
         return view('hazard-rpt.create', compact('projects', 'departments', 'danger_types', 'date_time', 'nomor'));
     }
@@ -46,6 +47,17 @@ class HazardReportController extends Controller
         $hazard->created_by = auth()->user()->id;
         $hazard->save();
 
+        foreach ($request->file_upload as $file) {
+            $filename = rand() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('document_upload'), $filename);
+
+            $attachment = new ReportAttachment();
+            $attachment->hazard_report_id = $hazard->id;
+            $attachment->filename = $filename;
+            $attachment->uploaded_by = auth()->user()->id;
+            $attachment->save();
+        }
+
         return redirect()->route('hazard-rpt.index')->with('success', 'Hazard Report has been created successfully.');
     }
 
@@ -55,6 +67,14 @@ class HazardReportController extends Controller
         $attachments = ReportAttachment::where('hazard_report_id', $id)->get();
 
         return view('hazard-rpt.show', compact('hazard', 'attachments'));
+    }
+
+    public function show_closed($id)
+    {
+        $hazard = HazardReport::findOrFail($id);
+        $attachments = ReportAttachment::where('hazard_report_id', $id)->get();
+
+        return view('hazard-rpt.show_closed', compact('hazard', 'attachments'));
     }
 
     public function store_attachment(Request $request)
@@ -107,8 +127,17 @@ class HazardReportController extends Controller
 
     public function data()
     {
-        $hazards = HazardReport::where('status', 'pending')->orderBy('created_at', 'desc')
-            ->get();
+        $roles = User::find(auth()->user()->id)->getRoleNames()->toArray();
+
+        if (in_array('superadmin', $roles) || in_array('admin_ho', $roles)) {
+            $hazards = HazardReport::where('status', 'pending')->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $hazards = HazardReport::where('status', 'pending')
+                ->where('project_code', auth()->user()->project)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
 
         return datatables()->of($hazards)
             ->editColumn('created_at', function ($hazard) {
@@ -165,8 +194,17 @@ class HazardReportController extends Controller
 
     public function closed_data()
     {
-        $hazards = HazardReport::where('status', 'closed')->orderBy('created_at', 'desc')
-            ->get();
+        $roles = User::find(auth()->user()->id)->getRoleNames()->toArray();
+
+        if (in_array('superadmin', $roles) || in_array('admin_ho', $roles)) {
+            $hazards = HazardReport::where('status', 'closed')->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $hazards = HazardReport::where('status', 'closed')
+                ->where('project_code', auth()->user()->project)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
 
         return datatables()->of($hazards)
             ->editColumn('created_at', function ($hazard) {
