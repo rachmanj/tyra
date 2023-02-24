@@ -30,10 +30,12 @@ class HazardReportController extends Controller
 
     public function store(Request $request)
     {
+        // return $request->all();
+        // die;
+
         $request->validate([
             'project_code' => 'required',
             'to_department_id' => 'required',
-            'danger_type_id' => 'required',
             'description' => 'required',
         ]);
 
@@ -47,15 +49,23 @@ class HazardReportController extends Controller
         $hazard->created_by = auth()->user()->id;
         $hazard->save();
 
-        foreach ($request->file_upload as $file) {
-            $filename = rand() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('document_upload'), $filename);
+        if ($request->danger_types) {
+            foreach ($request->danger_types as $danger_type) {
+                $hazard->danger_types()->attach($danger_type);
+            }
+        }
 
-            $attachment = new ReportAttachment();
-            $attachment->hazard_report_id = $hazard->id;
-            $attachment->filename = $filename;
-            $attachment->uploaded_by = auth()->user()->id;
-            $attachment->save();
+        if ($request->file_upload) {
+            foreach ($request->file_upload as $file) {
+                $filename = rand() . '_' . $file->getClientOriginalName();
+                $file->move(public_path('document_upload'), $filename);
+
+                $attachment = new ReportAttachment();
+                $attachment->hazard_report_id = $hazard->id;
+                $attachment->filename = $filename;
+                $attachment->uploaded_by = auth()->user()->id;
+                $attachment->save();
+            }
         }
 
         return redirect()->route('hazard-rpt.index')->with('success', 'Hazard Report has been created successfully.');
@@ -63,8 +73,10 @@ class HazardReportController extends Controller
 
     public function show($id)
     {
-        $hazard = HazardReport::findOrFail($id);
+        $hazard = HazardReport::with('danger_types')->findOrFail($id);
         $attachments = ReportAttachment::where('hazard_report_id', $id)->get();
+        // return $hazard;
+        // die;
 
         return view('hazard-rpt.show', compact('hazard', 'attachments'));
     }

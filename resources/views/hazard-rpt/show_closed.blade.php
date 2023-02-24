@@ -32,7 +32,11 @@
               <dt class="col-sm-4">Category</dt>
               <dd class="col-sm-8">: {{ $hazard->category }}</dd>
               <dt class="col-sm-4">Danger Type</dt>
-              <dd class="col-sm-8">: {{ $hazard->danger_type->name }}</dd>
+              <dd class="col-sm-8">: 
+                @foreach ($hazard->danger_types as $type)
+                  <span class="btn btn-xs btn-outline-danger">{{ $type->name }}</span>
+                @endforeach
+              </dd>
               <dt class="col-sm-4">Created by | Department</dt>
               <dd class="col-sm-8">: {{ $hazard->employee->name }} | {{ $hazard->employee->department->department_name }}</dd>
               <dt class="col-sm-4">Description</dt>

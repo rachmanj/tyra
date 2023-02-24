@@ -21,10 +21,10 @@ class HazardReport extends Model
         return $this->belongsTo(Department::class, 'to_department_id', 'id');
     }
 
-    public function danger_type()
-    {
-        return $this->belongsTo(DangerType::class, 'danger_type_id', 'id');
-    }
+    // public function danger_type()
+    // {
+    //     return $this->belongsTo(DangerType::class, 'danger_type_id', 'id');
+    // }
 
     public function attachments()
     {
@@ -34,5 +34,10 @@ class HazardReport extends Model
     public function responses()
     {
         return $this->hasMany(HazardResponse::class, 'hazard_report_id', 'id');
+    }
+
+    public function danger_types()
+    {
+        return $this->belongsToMany(DangerType::class, 'hazard_report_danger_type', 'hazard_report_id', 'danger_type_id');
     }
 }

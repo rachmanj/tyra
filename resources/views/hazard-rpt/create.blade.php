@@ -92,7 +92,19 @@
                               @enderror
                             </div>
                           </div>
+
                           <div class="col-6">
+                            <div class="form-group">
+                              @foreach ($danger_types as $item)
+                                <div class="form-check">
+                                  <input class="form-check-input" name="danger_types[]" value="{{ $item->id }}" type="checkbox">
+                                  <label class="form-check-label">{{ $item->name }}</label>
+                                </div>
+                              @endforeach
+                            </div>
+                          </div>
+
+                          {{-- <div class="col-6"> 
                             <div class="form-group">
                               <label for="danger_type_id">Danger Type</label>
                               <select name="danger_type_id" id="danger_type_id" class="form-control select2bs4 @error('danger_type_id') is-invalid @enderror">
@@ -108,7 +120,7 @@
                               @enderror
                             </div>
                           </div>
-                        </div>
+                        </div> --}}
 
                         <div class="row">
                           <div class="col-12">
