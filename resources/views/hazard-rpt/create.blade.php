@@ -95,6 +95,7 @@
 
                           <div class="col-6">
                             <div class="form-group">
+                              <label>Danger Type</label>
                               @foreach ($danger_types as $item)
                                 <div class="form-check">
                                   <input class="form-check-input" name="danger_types[]" value="{{ $item->id }}" type="checkbox">
@@ -119,8 +120,8 @@
                                 </div>
                               @enderror
                             </div>
-                          </div>
-                        </div> --}}
+                          </div>--}}
+                        </div> 
 
                         <div class="row">
                           <div class="col-12">
@@ -142,7 +143,7 @@
                
 
                 <div class="card-header">
-                  <button type="button" id="add_row" class="btn btn-sm btn-primary">Add more attachment</button>
+                  <button type="button" id="add_row" class="btn btn-sm btn-primary float-right">Add more attachment</button>
                 </div>
                 <div class="card-body">
                    <table class="table">
