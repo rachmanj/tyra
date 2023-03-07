@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-  Danger Types  
+  Specifications  
 @endsection
 
 @section('breadcrumb_title')
-    danger-types
+    specifications
 @endsection
 
 @section('content')
@@ -14,14 +14,11 @@
 
     <div class="card">
       <div class="card-header">
-
-        @hasanyrole('superadmin|admin|acc_cashier')
-        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Danger Type</button>
-        @endhasanyrole
+        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Specification</button>
       </div>  <!-- /.card-header -->
      
       <div class="card-body">
-        <table id="danger-type" class="table table-bordered table-striped">
+        <table id="specifications-table" class="table table-bordered table-striped">
           <thead>
           <tr>
             <th>#</th>
@@ -40,12 +37,12 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title"> New Danger Type</h4>
+        <h4 class="modal-title"> New Specification</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('danger-types.store') }}" method="POST">
+      <form action="{{ route('specifications.store') }}" method="POST">
         @csrf
       <div class="modal-body">
 
@@ -88,10 +85,10 @@
 
 <script>
   $(function () {
-    $("#danger-type").DataTable({
+    $("#specifications-table").DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('danger-types.data') }}',
+      ajax: '{{ route('specifications.data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
         {data: 'name'},

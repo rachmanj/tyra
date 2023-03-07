@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-    Hazard Report <small>(Pending)</small>
+  Document Types  
 @endsection
 
 @section('breadcrumb_title')
-    hazard-report
+    document-types
 @endsection
 
 @section('content')
@@ -14,36 +14,57 @@
 
     <div class="card">
       <div class="card-header">
-        <a href="#"><b>PENDING REPORTS</b> | </a>
-        <a href="{{ route('hazard-rpt.closed_index') }}"> Closed Reports</a>
-        <a href="{{ route('hazard-rpt.create') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-plus"></i> New Report</a>
-      </div>
-      <!-- /.card-header -->
+        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Document Type</button>
+      </div>  <!-- /.card-header -->
+     
       <div class="card-body">
-        <table id="hazard-rpt" class="table table-bordered table-striped">
+        <table id="documenttypes-table" class="table table-bordered table-striped">
           <thead>
           <tr>
             <th>#</th>
-            <th>Nomor</th>
-            <th>Project</th>
-            <th>To Dept</th>
-            <th>Date & Time</th>
-            <th>Description</th>
-            <th>Days</th>
+            <th>Name</th>
             <th></th>
           </tr>
           </thead>
         </table>
+      </div> <!-- /.card-body -->
+    </div> <!-- /.card -->
+  </div> <!-- /.col -->
+</div>  <!-- /.row -->
+
+{{-- Modal create --}}
+<div class="modal fade" id="modal-create">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title"> New Specification</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-      <!-- /.card-body -->
-    </div>
-    <!-- /.card -->
-  </div>
-  <!-- /.col -->
+      <form action="{{ route('legalitas_types.store') }}" method="POST">
+        @csrf
+      <div class="modal-body">
+
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input name="name" id="name" class="form-control @error('name') is-invalid @enderror" autofocus>
+          @error('name')
+            <div class="invalid-feedback">
+              {{ $message }}
+            </div>
+          @enderror
+        </div>
+
+      </div> <!-- /.modal-body -->
+      <div class="modal-footer float-left">
+        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal"> Close</button>
+        <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i> Save</button>
+      </div>
+    </form>
+    </div> <!-- /.modal-content -->
+  </div> <!-- /.modal-dialog -->
 </div>
-<!-- /.row -->
-
-
 @endsection
 
 @section('styles')
@@ -52,9 +73,6 @@
   <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
   <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('adminlte/plugins/datatables/css/datatables.min.css') }}"/>
-  <!-- Select2 -->
-  <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 @endsection
 
 @section('scripts')
@@ -64,32 +82,19 @@
 <script src="{{ asset('adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ asset('adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('adminlte/plugins/datatables/datatables.min.js') }}"></script>
-<!-- Select2 -->
-<script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
 
 <script>
   $(function () {
-    $("#hazard-rpt").DataTable({
+    $("#documenttypes-table").DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('hazard-rpt.data') }}',
+      ajax: '{{ route('legalitas_types.data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
-        {data: 'nomor'},
-        {data: 'project_code'},
-        {data: 'to_department_id'},
-        {data: 'created_at'},
-        {data: 'description'},
-        {data: 'days'},
+        {data: 'name'},
         {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,
-      columnDefs: [
-              {
-                "targets": [6],
-                "className": "text-right"
-              },
-            ]
     })
   });
 </script>

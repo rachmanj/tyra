@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hazard_report_danger_type', function (Blueprint $table) {
+        Schema::create('legalitas_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hazard_report_id')->constrained('hazard_reports')->cascadeOnDelete();
-            $table->foreignId('danger_type_id')->constrained('danger_types')->cascadeOnDelete();
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hazard_report_danger_type');
+        Schema::dropIfExists('legalitas_types');
     }
 };

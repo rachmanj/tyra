@@ -3,7 +3,7 @@
     <div class="container">
       <a href="#"class="navbar-brand">
         <img src="{{ asset('adminlte/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
-        <span class="brand-text text-white font-weight-light">HAZARD - Report</span>
+        <span class="brand-text text-white font-weight-light">VENDORS Info</span>
       </a>
   
       <button class="navbar-toggler order-1" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -17,7 +17,7 @@
             <a href="{{ route('dashboard.index') }}" class="nav-link">Dashboard</a>
           </li>
           {{-- MENU --}}
-            @include('templates.partials.menu.hazard-rpt')
+            @include('templates.partials.menu.suppliers')
             @include('templates.partials.menu.admin')
         </ul>
       </div>

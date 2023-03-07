@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-    Hazard Report <small>(Close)</small>
+    Vendors
 @endsection
 
 @section('breadcrumb_title')
-    hazard-report
+    Vendors
 @endsection
 
 @section('content')
@@ -14,22 +14,20 @@
 
     <div class="card">
       <div class="card-header">
-        <a href="{{ route('hazard-rpt.index') }}"><b>Pending Reports</b> | </a>
-        <a href="#"><b>CLOSED REPORTS</b></a>
+        <a href="{{ route('suppliers.create') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-plus"></i> New Vendor</a>
       </div>
       <!-- /.card-header -->
       <div class="card-body">
-        <table id="hazard-rpt" class="table table-bordered table-striped">
+        <table id="supppliers" class="table table-bordered table-striped">
           <thead>
           <tr>
             <th>#</th>
             <th>Nomor</th>
-            <th>Project</th>
-            <th>To Dept</th>
-            <th>Created at</th>
-            <th>Description</th>
-            <th>Duration</th>
-            <th></th>
+            <th>Vendor Name</th>
+            <th>SAP Code</th>
+            <th>Specifications</th>
+            <th>Experience</th>
+            <th>Status</th>
           </tr>
           </thead>
         </table>
@@ -51,9 +49,6 @@
   <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
   <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
   <link rel="stylesheet" type="text/css" href="{{ asset('adminlte/plugins/datatables/css/datatables.min.css') }}"/>
-  <!-- Select2 -->
-  <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 @endsection
 
 @section('scripts')
@@ -63,29 +58,27 @@
 <script src="{{ asset('adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ asset('adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('adminlte/plugins/datatables/datatables.min.js') }}"></script>
-<!-- Select2 -->
-<script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
-
+  
 <script>
   $(function () {
-    $("#hazard-rpt").DataTable({
+    $("#supppliers").DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('hazard-rpt.closed_data') }}',
+      ajax: '{{ route('suppliers.data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
-        {data: 'nomor'},
-        {data: 'project_code'},
-        {data: 'to_department_id'},
-        {data: 'created_at'},
-        {data: 'description'},
-        {data: 'duration'},
-        {data: 'action', orderable: false, searchable: false},
+        {data: 'reg_no'},
+        {data: 'name'},
+        {data: 'sap_code'},
+        {data: 'specifications'},
+        {data: 'experience'},
+        {data: 'status'},
+        // {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,
       columnDefs: [
               {
-                "targets": [6],
+                "targets": [5],
                 "className": "text-right"
               },
             ]

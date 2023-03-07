@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('danger_types', function (Blueprint $table) {
+        Schema::create('suppliers_specifications', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->foreignId('supplier_id')->constrained('suppliers')->cascadeOnDelete();;
+            $table->foreignId('specification_id')->constrained('specifications')->cascadeOnDelete();;
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('danger_types');
+        Schema::dropIfExists('suppliers_specifications');
     }
 };

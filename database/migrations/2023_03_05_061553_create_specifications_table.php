@@ -11,10 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('hazard_attachments', function (Blueprint $table) {
+        Schema::create('specifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('hazard_report_id')->constrained('hazard_reports')->cascadeOnDelete();
-            $table->string('file_name');
+            $table->string('name');
             $table->timestamps();
         });
     }
@@ -24,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('hazard_attachments');
+        Schema::dropIfExists('specifications');
     }
 };
