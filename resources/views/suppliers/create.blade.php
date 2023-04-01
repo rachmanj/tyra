@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-    New Hazard Report
+    New Vendor
 @endsection
 
 @section('breadcrumb_title')
-    hazard-report
+    vendors
 @endsection
 
 @section('content')
@@ -87,18 +87,43 @@
                         </div>
                         </div>
 
+                        {{-- input multiple emails --}}
                         <div class="row">
-                          {{-- make 3 colums --}}
-
                           <div class="col-12">
                             <div class="form-group">
-                              <label>Specifications</label>
-                              <select name="specifications[]" class="select2 form-control @error('experience') is-invalid @enderror" multiple="multiple" data-placeholder="Select specifications" style="width: 100%;">
-                                @foreach ($specifications as $item)
-                                  <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                @endforeach
-                              </select>
-                              @error('specifications')
+                              <label for="emails">Emails <small>(use comma to separate between emails)</small></label>
+                              <input class="form-control" type="email" name="emails" class="form-control" multiple style="width: 100%;">
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="form-group">
+                              <label>Specifications <small>(choose one or more)</small></label>
+                              <div class="select2-purple">
+                                <select name="specifications[]" class="select2 form-control" data-dropdown-css-class="select2-purple" multiple="multiple" data-placeholder="Select specifications" style="width: 100%;">
+                                  @foreach ($specifications as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-12">
+                            <div class="form-group">
+                              <label>Principal Products <small>(choose one or more)</small></label>
+                              <div class="select2-purple">
+                                <select name="brands[]" class="select2 form-control @error('brands') is-invalid @enderror" multiple="multiple" data-placeholder="Select brands" style="width: 100%;">
+                                  @foreach ($brands as $item)
+                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                  @endforeach
+                                </select>
+                              </div>
+                              @error('brands')
                                   <div class="invalid-feedback">
                                     {{ $message }}
                                   </div>
@@ -159,22 +184,30 @@
                       
                     </div> <!-- /.card-body -->
 
-               
-
                 <div class="card-header">
                     <h3 class="card-title">Legalitas</h3>
-                  <button type="button" id="add_row" class="btn btn-sm btn-primary float-right">Add more attachment</button>
+                  <button type="button" id="add_row" class="btn btn-sm btn-primary float-right">Add more documents</button>
                 </div>
                 <div class="card-body">
                    <table class="table">
                     <thead>
                       <tr>
+                        <th>Doc Type</th>
+                        <th>Doc Number</th>
                         <th>Attachment</th>
-                        <th>Action</th>
                       </tr>
                     </thead>
                     <tbody id="attachment_table">
                       <tr>
+                        <td>
+                          <select name="document_type[]" class="form-control">
+                            <option value="">-- Select Document Type --</option>
+                            @foreach ($document_types as $item)
+                              <option value="{{ $item->name }}">{{ $item->name }}</option>
+                            @endforeach
+                        </td>
+                        <td>
+                          <input type="text" name="document_number[]" id="file" class="form-control">
                         <td>
                           <input type="file" name="file_upload[]" id="file" class="form-control">
                         </td>
@@ -215,6 +248,21 @@
     $('.select2bs4').select2({
       theme: 'bootstrap4'
     })
+
+    // when add row button is clicked
+    $(document).on('click', '#add_row', function() {
+          var html = '';
+          html += '<tr>';
+          html += '<td><select name="document_type[]" class="form-control"><option value="">-- Select Document Type --</option>@foreach ($document_types as $item)<option value="{{ $item->name }}">{{ $item->name }}</option>@endforeach</select></td>';
+          html += '<td><input type="text" name="document_number[]" id="file" class="form-control"></td>';
+          html += '<td><input type="file" name="file_upload[]" id="file" class="form-control"></td>';
+          html += '<td><button class="btn btn-xs btn-danger remove_row">delete</button></td>';
+          html += '</tr>';
+          $('#attachment_table').append(html);
+        });
+        $(document).on('click', '.remove_row', function() {
+          $(this).closest('tr').remove();
+        });
   })
 </script>
 @endsection

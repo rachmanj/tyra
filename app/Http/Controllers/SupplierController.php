@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
+use App\Models\Document;
+use App\Models\LegalitasType;
 use App\Models\Specification;
 use App\Models\Supplier;
 use Carbon\Carbon;
@@ -18,20 +21,25 @@ class SupplierController extends Controller
     {
         $badan_hukum = ['PT', 'CV', 'UD', 'Koperasi', 'Yayasan', 'Lainnya'];
         $specifications = Specification::orderBy('name', 'asc')->get();
-        $nomor = Carbon::now()->addHours(8)->format('y') . '/PRC/REG-VENDOR/' . str_pad(Supplier::count() + 1, 3, '0', STR_PAD_LEFT);
+        $brands = Brand::orderBy('name', 'asc')->get();
+        $document_types = LegalitasType::orderBy('name', 'asc')->get();
+        $nomor = str_pad(Supplier::count() + 1, 3, '0', STR_PAD_LEFT) . '/PRC/REG-VENDOR/' . Carbon::now()->addHours(8)->format('y');
 
-        return view('suppliers.create', compact('nomor', 'badan_hukum', 'specifications'));
+        return view('suppliers.create', compact('nomor', 'badan_hukum', 'specifications', 'brands', 'document_types'));
     }
 
     public function store(Request $request)
     {
+        $emailAddresses = explode(',', $request->emails);
+
+
         $request->validate([
             'name' => 'required',
             'experience' => ['required', 'numeric', 'min:1900', 'max:2099'],
         ]);
 
         $supplier = new Supplier();
-        $supplier->reg_no = Carbon::now()->addHours(8)->format('y') . '/PRC/REG-VENDOR/' . str_pad(Supplier::count() + 1, 3, '0', STR_PAD_LEFT);
+        $supplier->reg_no = str_pad(Supplier::count() + 1, 3, '0', STR_PAD_LEFT) . '/PRC/REG-VENDOR/' . Carbon::now()->addHours(8)->format('y');
         $supplier->name = $request->name;
         $supplier->sap_code = $request->sap_code;
         $supplier->badan_hukum = $request->badan_hukum;
@@ -43,9 +51,28 @@ class SupplierController extends Controller
         $supplier->created_by = auth()->user()->id;
         $supplier->save();
 
+        // if email is not empty
+        $emailArray = explode(',', $request->emails);
+        if ($emailArray) {
+            foreach ($emailArray as $email) {
+                $supplier->emails()->create([
+                    'email' => $email,
+                    'created_by' => auth()->user()->id,
+                ]);
+            }
+        }
+
+        // if specification is not empty
         if ($request->specifications) {
             foreach ($request->specifications as $specification) {
                 $supplier->specifications()->attach($specification);
+            }
+        }
+
+        // if brand is not empty
+        if ($request->brands) {
+            foreach ($request->brands as $brand) {
+                $supplier->brands()->attach($brand);
             }
         }
 

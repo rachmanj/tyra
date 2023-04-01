@@ -25,4 +25,23 @@ class Supplier extends Model
     {
         return $this->belongsTo(User::class, 'created_by');
     }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class);
+    }
+
+    public function brands()
+    {
+        return $this->belongsToMany(Brand::class, 'suppliers_brands');
+    }
+
+    public function emails()
+    {
+        return $this->hasMany(EmailAddress::class);
+    }
+    public function branches()
+    {
+        return $this->hasMany(Branch::class);
+    }
 }
