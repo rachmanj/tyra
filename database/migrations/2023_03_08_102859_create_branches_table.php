@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('supplier_id')->constrained()->cascadeOnDelete();
             $table->string('address1');
             $table->string('address2')->nullable();
-            $table->string('city');
-            $table->string('province');
-            $table->string('country');
-            $table->string('postal_code');
-            $table->string('phone');
+            $table->string('city')->nullable();
+            $table->string('province')->nullable();
+            $table->string('country')->nullable();
+            $table->string('postal_code')->nullable();
+            $table->string('phone')->nullable();
             $table->string('email')->nullable();
             $table->timestamps();
         });

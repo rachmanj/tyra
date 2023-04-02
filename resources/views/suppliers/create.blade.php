@@ -14,10 +14,10 @@
 
             <div class="card">
                 <div class="card-header">
-                    <a href="{{ route('suppliers.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-undo"></i> Back</a>
+                    <a href="{{ route('suppliers.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-arrow-left"></i> Back</a>
                 </div>
 
-                <form action="{{ route('suppliers.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('suppliers.store') }}" method="POST">
                     @csrf
                     <div class="card-body">
 
@@ -172,12 +172,7 @@
                             {{-- text area of description --}}
                             <div class="form-group">
                               <label for="remarks">Remarks</label>
-                              <textarea name="remarks" id="remarks" class="form-control @error('remarks') is-invalid @enderror" rows="3">{{ old('remarks') }}</textarea>
-                              @error('remarks')
-                                <div class="invalid-feedback">
-                                  {{ $message }}
-                                </div>
-                              @enderror
+                              <textarea name="remarks" id="remarks" class="form-control" rows="3">{{ old('remarks') }}</textarea>
                             </div>
                           </div>
                         </div>
@@ -185,34 +180,47 @@
                     </div> <!-- /.card-body -->
 
                 <div class="card-header">
-                    <h3 class="card-title">Legalitas</h3>
-                  <button type="button" id="add_row" class="btn btn-sm btn-primary float-right">Add more documents</button>
+                    <h3 class="card-title">Branches</h3>
+                  {{-- <button type="button" id="add" class="btn btn-sm btn-primary float-right">Add more branches</button> --}}
                 </div>
                 <div class="card-body">
                    <table class="table">
                     <thead>
                       <tr>
-                        <th>Doc Type</th>
-                        <th>Doc Number</th>
-                        <th>Attachment</th>
+                        <th>Address1</th>
+                        <th>Address2</th>
+                        <th>City</th>
+                        <th>Province</th>
+                        <th>ZIP</th>
+                        <th>Phone</th>
+                        <th>Email</th>
                       </tr>
                     </thead>
-                    <tbody id="attachment_table">
+                    <tbody id="branches_table">
                       <tr>
                         <td>
-                          <select name="document_type[]" class="form-control">
-                            <option value="">-- Select Document Type --</option>
-                            @foreach ($document_types as $item)
-                              <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
+                          <input type="text" name="branches[0][address1]" class="form-control">
                         </td>
                         <td>
-                          <input type="text" name="document_number[]" id="file" class="form-control">
-                        <td>
-                          <input type="file" name="file_upload[]" id="file" class="form-control">
+                          <input type="text" name="branches[0][address2]" class="form-control">
                         </td>
                         <td>
-                          <button class="btn btn-xs btn-danger remove_row">delete</button>
+                          <input type="text" name="branches[0][city]" class="form-control">
+                        </td>
+                        <td>
+                          <input type="text" name="branches[0][province]" class="form-control">
+                        </td>
+                        <td>
+                          <input type="text" name="branches[0][postal_code]" class="form-control">
+                        </td>
+                        <td>
+                          <input type="text" name="branches[0][phone]" class="form-control">
+                        </td>
+                        <td>
+                          <input type="text" name="branches[0][email]" class="form-control">
+                        </td>
+                        <td>
+                          <button type="button" class="btn btn-xs btn-success" id="add_row">add</button>
                         </td>
                       </tr>
                     </tbody>
@@ -248,21 +256,46 @@
     $('.select2bs4').select2({
       theme: 'bootstrap4'
     })
-
-    // when add row button is clicked
-    $(document).on('click', '#add_row', function() {
-          var html = '';
-          html += '<tr>';
-          html += '<td><select name="document_type[]" class="form-control"><option value="">-- Select Document Type --</option>@foreach ($document_types as $item)<option value="{{ $item->name }}">{{ $item->name }}</option>@endforeach</select></td>';
-          html += '<td><input type="text" name="document_number[]" id="file" class="form-control"></td>';
-          html += '<td><input type="file" name="file_upload[]" id="file" class="form-control"></td>';
-          html += '<td><button class="btn btn-xs btn-danger remove_row">delete</button></td>';
-          html += '</tr>';
-          $('#attachment_table').append(html);
-        });
-        $(document).on('click', '.remove_row', function() {
-          $(this).closest('tr').remove();
-        });
   })
+</script>
+<script>
+    // when add row button is clicked
+    var i = 0;
+    $('#add_row').click(function () {
+      ++i;
+      $('#branches_table').append(
+        '<tr>' +
+          '<td>' +
+            '<input type="text" name="branches['+i+'][address1]" class="form-control">' +
+          '</td>' +
+          '<td>' +
+            '<input type="text" name="branches['+i+'][address2]" class="form-control">' +
+          '</td>' +
+          '<td>' +
+            '<input type="text" name="branches['+i+'][city]" class="form-control">' +
+          '</td>' +
+          '<td>' +
+            '<input type="text" name="branches['+i+'][province]" class="form-control">' +
+          '</td>' +
+          '<td>' +
+            '<input type="text" name="branches['+i+'][postal_code]" class="form-control">' +
+          '</td>' +
+          '<td>' +
+            '<input type="text" name="branches['+i+'][phone]" class="form-control">' +
+          '</td>' +
+          '<td>' +
+            '<input type="text" name="branches['+i+'][email]" class="form-control">' +
+          '</td>' +
+          '<td>' +
+            '<button class="btn btn-xs btn-danger remove_row">delete</button>' +
+          '</td>' +
+        '</tr>'
+      )
+    })
+
+    // when remove row button is clicked
+    $(document).on('click', '.remove_row', function () {
+        $(this).parents('tr').remove()
+    })
 </script>
 @endsection

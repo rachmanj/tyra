@@ -19,27 +19,25 @@ class SupplierController extends Controller
 
     public function create()
     {
-        $badan_hukum = ['PT', 'CV', 'UD', 'Koperasi', 'Yayasan', 'Lainnya'];
+        $badan_hukum = ['PT', 'CV', 'UD', 'Koperasi', 'Yayasan', 'Perorangan', 'Lainnya'];
         $specifications = Specification::orderBy('name', 'asc')->get();
         $brands = Brand::orderBy('name', 'asc')->get();
         $document_types = LegalitasType::orderBy('name', 'asc')->get();
-        $nomor = str_pad(Supplier::count() + 1, 3, '0', STR_PAD_LEFT) . '/PRC/REG-VENDOR/' . Carbon::now()->addHours(8)->format('y');
+        $nomor = $this->nomor_registrasi();
 
         return view('suppliers.create', compact('nomor', 'badan_hukum', 'specifications', 'brands', 'document_types'));
     }
 
     public function store(Request $request)
     {
-        $emailAddresses = explode(',', $request->emails);
-
-
         $request->validate([
             'name' => 'required',
             'experience' => ['required', 'numeric', 'min:1900', 'max:2099'],
+            'badan_hukum' => 'required',
         ]);
 
         $supplier = new Supplier();
-        $supplier->reg_no = str_pad(Supplier::count() + 1, 3, '0', STR_PAD_LEFT) . '/PRC/REG-VENDOR/' . Carbon::now()->addHours(8)->format('y');
+        $supplier->reg_no = $this->nomor_registrasi();
         $supplier->name = $request->name;
         $supplier->sap_code = $request->sap_code;
         $supplier->badan_hukum = $request->badan_hukum;
@@ -73,6 +71,21 @@ class SupplierController extends Controller
         if ($request->brands) {
             foreach ($request->brands as $brand) {
                 $supplier->brands()->attach($brand);
+            }
+        }
+
+        // save branches
+        if ($request->branches) {
+            foreach ($request->branches as $branch) {
+                $supplier->branches()->create([
+                    'address1' => $branch['address1'],
+                    'address2' => $branch['address2'],
+                    'city' => $branch['city'],
+                    'province' => $branch['province'],
+                    'postal_code' => $branch['postal_code'],
+                    'phone' => $branch['phone'],
+                    'email' => $branch['email'],
+                ]);
             }
         }
 
@@ -117,5 +130,10 @@ class SupplierController extends Controller
             ->addIndexColumn()
             ->rawColumns(['action', 'status', 'name', 'specifications'])
             ->toJson();
+    }
+
+    public function nomor_registrasi()
+    {
+        return str_pad(Supplier::count() + 1, 3, '0', STR_PAD_LEFT) . '/PRC/REG-VENDOR/' . Carbon::now()->addHours(8)->format('y');
     }
 }

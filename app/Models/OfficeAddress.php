@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class OfficeAddress extends Model
 {
     use HasFactory;
+
+    protected $guarded = [];
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class);
+    }
 }
