@@ -87,13 +87,80 @@
                         </div>
                         </div>
 
-                        {{-- input multiple emails --}}
+                        {{-- divider --}}
                         <div class="row">
                           <div class="col-12">
+                            <hr>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-4">
                             <div class="form-group">
-                              <label for="emails">Emails <small>(use comma to separate between emails)</small></label>
-                              <input class="form-control" type="email" name="emails" class="form-control" multiple style="width: 100%;">
+                              <label for="email">Emails</small></label>
+                              <input class="form-control" type="text" name="email" class="form-control">
                             </div>
+                          </div>
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="phone">Phones</label>
+                              <input class="form-control" type="text" name="phone" class="form-control">
+                            </div>
+                          </div>
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="website">Website</label>
+                              <input class="form-control" type="text" name="website" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="address1">Address1</label>
+                              <input class="form-control" type="text" name="address1" class="form-control">
+                            </div>
+                          </div>
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="address2">Address2</label>
+                              <input class="form-control" type="text" name="address2" class="form-control">
+                            </div>
+                          </div>
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="city">City</label>
+                              <input class="form-control" type="text" name="city" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row">
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="province">Province</label>
+                              <input class="form-control" type="text" name="province" class="form-control">
+                            </div>
+                          </div>
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="country">Country</label>
+                              <input class="form-control" type="text" name="country" class="form-control">
+                            </div>
+                          </div>
+                          <div class="col-4">
+                            <div class="form-group">
+                              <label for="postal_code">Postal Code</label>
+                              <input class="form-control" type="text" name="postal_code" class="form-control">
+                            </div>
+                          </div>
+                        </div>
+
+                        {{-- divider --}}
+                        <div class="row">
+                          <div class="col-12">
+                            <hr>
                           </div>
                         </div>
 
@@ -180,47 +247,30 @@
                     </div> <!-- /.card-body -->
 
                 <div class="card-header">
-                    <h3 class="card-title">Branches</h3>
-                  {{-- <button type="button" id="add" class="btn btn-sm btn-primary float-right">Add more branches</button> --}}
+                    <h3 class="card-title">Contacts</h3>
                 </div>
                 <div class="card-body">
                    <table class="table">
                     <thead>
                       <tr>
-                        <th>Address1</th>
-                        <th>Address2</th>
-                        <th>City</th>
-                        <th>Province</th>
-                        <th>ZIP</th>
-                        <th>Phone</th>
+                        <th>Name</th>
                         <th>Email</th>
+                        <th>Phone</th>
                       </tr>
                     </thead>
-                    <tbody id="branches_table">
+                    <tbody id="contacts_table">
                       <tr>
                         <td>
-                          <input type="text" name="branches[0][address1]" class="form-control">
+                          <input type="text" name="contacts[0][name]" class="form-control">
                         </td>
                         <td>
-                          <input type="text" name="branches[0][address2]" class="form-control">
+                          <input type="text" name="contacts[0][email]" class="form-control">
                         </td>
                         <td>
-                          <input type="text" name="branches[0][city]" class="form-control">
+                          <input type="text" name="contacts[0][phone]" class="form-control">
                         </td>
                         <td>
-                          <input type="text" name="branches[0][province]" class="form-control">
-                        </td>
-                        <td>
-                          <input type="text" name="branches[0][postal_code]" class="form-control">
-                        </td>
-                        <td>
-                          <input type="text" name="branches[0][phone]" class="form-control">
-                        </td>
-                        <td>
-                          <input type="text" name="branches[0][email]" class="form-control">
-                        </td>
-                        <td>
-                          <button type="button" class="btn btn-xs btn-success" id="add_row">add</button>
+                          <button type="button" class="btn btn-xs btn-success" id="add_row">add more</button>
                         </td>
                       </tr>
                     </tbody>
@@ -263,28 +313,16 @@
     var i = 0;
     $('#add_row').click(function () {
       ++i;
-      $('#branches_table').append(
+      $('#contacts_table').append(
         '<tr>' +
           '<td>' +
-            '<input type="text" name="branches['+i+'][address1]" class="form-control">' +
+            '<input type="text" name="contacts['+i+'][name]" class="form-control">' +
           '</td>' +
           '<td>' +
-            '<input type="text" name="branches['+i+'][address2]" class="form-control">' +
+            '<input type="text" name="contacts['+i+'][email]" class="form-control">' +
           '</td>' +
           '<td>' +
-            '<input type="text" name="branches['+i+'][city]" class="form-control">' +
-          '</td>' +
-          '<td>' +
-            '<input type="text" name="branches['+i+'][province]" class="form-control">' +
-          '</td>' +
-          '<td>' +
-            '<input type="text" name="branches['+i+'][postal_code]" class="form-control">' +
-          '</td>' +
-          '<td>' +
-            '<input type="text" name="branches['+i+'][phone]" class="form-control">' +
-          '</td>' +
-          '<td>' +
-            '<input type="text" name="branches['+i+'][email]" class="form-control">' +
+            '<input type="text" name="contacts['+i+'][phone]" class="form-control">' +
           '</td>' +
           '<td>' +
             '<button class="btn btn-xs btn-danger remove_row">delete</button>' +

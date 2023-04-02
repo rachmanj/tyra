@@ -25,9 +25,11 @@
             <th>Nomor</th>
             <th>Vendor Name</th>
             <th>SAP Code</th>
+            <th>Phone</th>
             <th>Specifications</th>
             <th>Experience</th>
             <th>Status</th>
+            <th></th>
           </tr>
           </thead>
         </table>
@@ -70,10 +72,11 @@
         {data: 'reg_no'},
         {data: 'name'},
         {data: 'sap_code'},
+        {data: 'phone'},
         {data: 'specifications'},
         {data: 'experience'},
         {data: 'status'},
-        // {data: 'action', orderable: false, searchable: false},
+        {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,
       columnDefs: [

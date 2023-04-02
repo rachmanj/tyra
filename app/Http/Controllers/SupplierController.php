@@ -42,23 +42,20 @@ class SupplierController extends Controller
         $supplier->sap_code = $request->sap_code;
         $supplier->badan_hukum = $request->badan_hukum;
         $supplier->npwp = $request->npwp;
+        $supplier->email = $request->email;
+        $supplier->phone = $request->phone;
+        $supplier->website = $request->website;
+        $supplier->address1 = $request->address1;
+        $supplier->address2 = $request->address2;
+        $supplier->city = $request->city;
+        $supplier->province = $request->province;
+        $supplier->postal_code = $request->postal_code;
         $supplier->experience = $request->experience;
         $supplier->jumlah_karyawan = $request->jumlah_karyawan;
         $supplier->status = $request->status;
         $supplier->remarks = $request->remarks;
         $supplier->created_by = auth()->user()->id;
         $supplier->save();
-
-        // if email is not empty
-        $emailArray = explode(',', $request->emails);
-        if ($emailArray) {
-            foreach ($emailArray as $email) {
-                $supplier->emails()->create([
-                    'email' => $email,
-                    'created_by' => auth()->user()->id,
-                ]);
-            }
-        }
 
         // if specification is not empty
         if ($request->specifications) {
@@ -75,16 +72,12 @@ class SupplierController extends Controller
         }
 
         // save branches
-        if ($request->branches) {
-            foreach ($request->branches as $branch) {
-                $supplier->branches()->create([
-                    'address1' => $branch['address1'],
-                    'address2' => $branch['address2'],
-                    'city' => $branch['city'],
-                    'province' => $branch['province'],
-                    'postal_code' => $branch['postal_code'],
-                    'phone' => $branch['phone'],
-                    'email' => $branch['email'],
+        if ($request->contacts) {
+            foreach ($request->contacts as $contact) {
+                $supplier->contacts()->create([
+                    'name' => $contact['name'],
+                    'email' => $contact['email'],
+                    'phone' => $contact['phone'],
                 ]);
             }
         }
@@ -95,7 +88,11 @@ class SupplierController extends Controller
     public function show($id)
     {
         $supplier = Supplier::findOrFail($id);
-        return view('suppliers.show', compact('supplier'));
+        $address = $supplier->address1 . ', ' . $supplier->address2 . ', ' . $supplier->city . ', ' . $supplier->province . ', ' . $supplier->postal_code;
+        // legalitas if exists
+        $legalitas = Document::where('supplier_id', $id)->get();
+
+        return view('suppliers.show', compact('supplier', 'address', 'legalitas'));
     }
 
     public function data()
@@ -117,7 +114,7 @@ class SupplierController extends Controller
                 }
             })
             ->editColumn('name', function ($supplier) {
-                return '<a href="' . route('suppliers.show', $supplier->id) . '">' . $supplier->name . ', ' . $supplier->badan_hukum . '</a>';
+                return $supplier->name . ', ' . $supplier->badan_hukum;
             })
             ->addColumn('specifications', function ($supplier) {
                 $specifications = '';

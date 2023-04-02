@@ -18,6 +18,15 @@ return new class extends Migration
             $table->string('sap_code')->nullable();
             $table->string('badan_hukum', 20)->nullable();
             $table->string('npwp')->nullable();
+            $table->string('email')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('website')->nullable();
+            $table->string('address1')->nullable();
+            $table->string('address2')->nullable();
+            $table->string('city')->nullable();
+            $table->string('province')->nullable();
+            $table->string('country')->nullable();
+            $table->string('postal_code')->nullable();
             $table->integer('experience')->nullable(); // tahun berdiri
             $table->integer('jumlah_karyawan')->nullable();
             $table->foreignId('account_officer')->nullable();

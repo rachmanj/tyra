@@ -14,7 +14,7 @@
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title"> Vendor Detail</h3>
-                <a href="{{ route('suppliers.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-undo"></i> Back</a>
+                <a href="{{ route('suppliers.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-arrow-left"></i> Back</a>
             </div>
             <div class="card-body">
                 <dl class="row">
@@ -23,7 +23,15 @@
                     <dt class="col-sm-4">Name</dt>
                     <dd class="col-sm-8">: <b>{{ $supplier->name . ', ' . $supplier->badan_hukum }}</b></dd>
                     <dt class="col-sm-4">NPWP</dt>
-                    <dd class="col-sm-8">: {{ $supplier->npwp }}</dd>
+                    <dd class="col-sm-8">: {{ $supplier->npwp ? $supplier->npwp : '-' }}</dd>
+                    <dt class="col-sm-4">Address</dt>
+                    <dd class="col-sm-8">: {{ $address }}</dd>
+                    <dt class="col-sm-4">Phone</dt>
+                    <dd class="col-sm-8">: {{ $supplier->phone ? $supplier->phone : '-'  }}</dd>
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">: {{ $supplier->email ? $supplier->email : '-' }}</dd>
+                    <dt class="col-sm-4">Website</dt>
+                    <dd class="col-sm-8">: {{ $supplier->website ? $supplier->website : '-' }}</dd>
                     <dt class="col-sm-4">Established | Experience</dt>
                     <dd class="col-sm-8">: {{ $supplier->experience ? $supplier->experience . ' | ' . date('Y') - $supplier->experience . ' years' : '-'  }}</dd>
                     <dt class="col-sm-4">Specifications</dt>
@@ -67,54 +75,29 @@
             </div>
 
             <div class="card-header">
-                <h3 class="card-title">Address</h3>
+                <h3 class="card-title">Contact Persons</h3>
             </div>
             <div class="card-body">
-                <div class="col-md-4">
-                <!-- Widget: user widget style 2 -->
-                
-                <div class="card-widget widget-user-2">
-                    <div class="ribbon-wrapper">
-                        <div class="ribbon bg-primary">
-                          Default
-                        </div>
-                      </div>
-                  <!-- Add the bg color to the header using any of the bg-* classes -->
-                    <div class="widget-user-header bg-warning">
-                    <!-- /.widget-user-image -->
-                        <h3 class="widget-user-username">Nadia Carmichael</h3>
-                        <h5 class="widget-user-desc">Lead Developer</h5>
-                    </div>
-                    <div class="card-footer p-0">
-                        <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                            Projects <span class="float-right badge bg-primary">31</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                            Tasks <span class="float-right badge bg-info">5</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                            Completed Projects <span class="float-right badge bg-success">12</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link">
-                            Followers <span class="float-right badge bg-danger">842</span>
-                            </a>
-                        </li>
-                        </ul>
-                    </div>
-                </div>
-                <!-- /.widget-user -->
-              </div>
-            </div>
-            <div class="card-header">
-                <h3 class="card-title">Contact Person</h3>
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Position</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($supplier->contacts as $contact)
+                            <tr>
+                                <td>{{ $contact->name }}</td>
+                                <td>{{ $contact->position }}</td>
+                                <td>{{ $contact->phone }}</td>
+                                <td>{{ $contact->email }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

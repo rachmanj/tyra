@@ -36,12 +36,8 @@ class Supplier extends Model
         return $this->belongsToMany(Brand::class, 'suppliers_brands');
     }
 
-    public function emails()
+    public function contacts()
     {
-        return $this->hasMany(EmailAddress::class);
-    }
-    public function branches()
-    {
-        return $this->hasMany(Branch::class);
+        return $this->hasMany(Contact::class);
     }
 }
