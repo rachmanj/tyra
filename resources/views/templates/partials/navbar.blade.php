@@ -18,7 +18,10 @@
         </li>
 
         @include('templates.partials.menu.suppliers')
-        @include('templates.partials.menu.admin')
+
+        @can('access_admin')
+          @include('templates.partials.menu.admin')
+        @endcan
 
       </ul>
     </div>

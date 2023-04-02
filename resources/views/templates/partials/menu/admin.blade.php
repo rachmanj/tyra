@@ -4,11 +4,11 @@
       
       <li><a href="{{ route('users.index') }}" class="dropdown-item">User List</a></li>
       
-      
+      @can('access_roles')
       <li><a href="{{ route('roles.index') }}" class="dropdown-item">Roles</a></li>
-      
-     
+      @endcan
+      @can('access_permissions')
       <li><a href="{{ route('permissions.index') }}" class="dropdown-item">Permissions</a></li>
-      
+      @endcan
     </ul>
 </li>

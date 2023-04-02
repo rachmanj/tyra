@@ -254,6 +254,7 @@
                     <thead>
                       <tr>
                         <th>Name</th>
+                        <th>Position</th>
                         <th>Email</th>
                         <th>Phone</th>
                       </tr>
@@ -262,6 +263,9 @@
                       <tr>
                         <td>
                           <input type="text" name="contacts[0][name]" class="form-control">
+                        </td>
+                        <td>
+                          <input type="text" name="contacts[0][position]" class="form-control">
                         </td>
                         <td>
                           <input type="text" name="contacts[0][email]" class="form-control">
@@ -317,6 +321,9 @@
         '<tr>' +
           '<td>' +
             '<input type="text" name="contacts['+i+'][name]" class="form-control">' +
+          '</td>' +
+          '<td>' +
+            '<input type="text" name="contacts['+i+'][position]" class="form-control">' +
           '</td>' +
           '<td>' +
             '<input type="text" name="contacts['+i+'][email]" class="form-control">' +

@@ -5,7 +5,7 @@
 @endsection
 
 @section('breadcrumb_title')
-    Vendors
+    vendors
 @endsection
 
 @section('content')
@@ -14,7 +14,7 @@
 
     <div class="card">
       <div class="card-header">
-        <a href="{{ route('suppliers.create') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-plus"></i> New Vendor</a>
+        <a href="{{ route('suppliers.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> New Vendor</a>
       </div>
       <!-- /.card-header -->
       <div class="card-body">
@@ -81,7 +81,7 @@
       fixedHeader: true,
       columnDefs: [
               {
-                "targets": [5],
+                "targets": [6],
                 "className": "text-right"
               },
             ]

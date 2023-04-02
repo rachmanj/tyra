@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\HazardReport;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use App\Models\Supplier;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        return view('dashboard.index');
+        $vendors = Supplier::all();
+
+        return view('dashboard.index', compact('vendors'));
     }
 }

@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('documents', function (Blueprint $table) {
             $table->id();
             $table->foreignId('supplier_id');
-            $table->string('document_type');
-            $table->string('document_number')->nullable();
-            $table->string('document_filename')->nullable();
+            $table->string('type');
+            $table->string('number')->nullable();
+            $table->string('filename')->nullable();
             $table->text('remarks')->nullable();
             $table->foreignId('created_by');
             $table->timestamps();

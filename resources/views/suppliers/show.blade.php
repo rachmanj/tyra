@@ -48,15 +48,14 @@
                     </dd>
                     <dt class="col-sm-4">Number of Employees</dt>
                     <dd class="col-sm-8">: {{ $supplier->jumlah_karyawan }} employees</dd>
-                    <dt class="col-sm-4">Account Officer</dt>
-                    <dd class="col-sm-8">: {{ $supplier->account_officer ? $supplier->accountOfficer->name : '-' }}</dd>
-                    
+                    {{-- <dt class="col-sm-4">Account Officer</dt>
+                    <dd class="col-sm-8">: {{ $supplier->account_officer ? $supplier->accountOfficer->name : '-' }}</dd> --}}
                     <dt class="col-sm-4">Remarks</dt>
                     <dd class="col-sm-8">: {{ $supplier->remarks }}</dd>
                     <dt class="col-sm-4">Legalitas</dt>
                     <dd class="col-sm-8">: 
                     @foreach ($supplier->documents as $doc)
-                        <a href="{{ asset('document_upload/') . '/'. $doc->document_filename }}"  class="btn btn-sm btn-outline-success"  target=_blank>{{ $doc->document_type }} {{ $doc->document_number ? "No. " . $doc->document_number : "" }} </a>
+                        <a href="{{ asset('document_upload/') . '/'. $doc->filename }}"  class="btn btn-sm btn-outline-success"  target=_blank>{{ $doc->type }}</a>
                     @endforeach
                     </dd>
                     <dt class="col-sm-4">Status</dt>
@@ -78,7 +77,7 @@
                 <h3 class="card-title">Contact Persons</h3>
             </div>
             <div class="card-body">
-                <table class="table table-bordered table-striped">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th>Name</th>

@@ -48,6 +48,13 @@ Route::middleware('auth')->group(function () {
     // SUPPLIERS
     Route::prefix('suppliers')->name('suppliers.')->group(function () {
         Route::get('data', [SupplierController::class, 'data'])->name('data');
+        Route::get('/{supplier_id}/legalitas', [SupplierController::class, 'legalitas'])->name('legalitas');
+        Route::post('/{supplier_id}/legalitas/store', [SupplierController::class, 'legalitas_store'])->name('legalitas.store');
+        Route::put('/legalitas/{document_id}/update', [SupplierController::class, 'legalitas_update'])->name('legalitas.update');
+        Route::delete('/legalitas/{document_id}/delete', [SupplierController::class, 'legalitas_destroy'])->name('legalitas.destroy');
+        Route::post('/contact/store', [SupplierController::class, 'contact_store'])->name('contact.store');
+        Route::put('/contact/{contact_id}/update', [SupplierController::class, 'contact_update'])->name('contact.update');
+        Route::delete('/contact/{contact_id}/delete', [SupplierController::class, 'contact_destroy'])->name('contact.destroy');
     });
     Route::resource('suppliers', SupplierController::class);
 
