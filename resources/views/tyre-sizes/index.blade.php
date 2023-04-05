@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-  Vendors
+  Tyre Sizes  
 @endsection
 
 @section('breadcrumb_title')
-    vendors
+    tyre-sizes
 @endsection
 
 @section('content')
@@ -14,11 +14,11 @@
 
     <div class="card">
       <div class="card-header">
-        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Vendor</button>
+        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Tyre Size</button>
       </div>  <!-- /.card-header -->
      
       <div class="card-body">
-        <table id="vendors-table" class="table table-bordered table-striped">
+        <table id="tyresize-table" class="table table-bordered table-striped">
           <thead>
           <tr>
             <th>#</th>
@@ -37,19 +37,19 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title"> New Vendor</h4>
+        <h4 class="modal-title"> New Tyre Size</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('suppliers.store') }}" method="POST">
+      <form action="{{ route('tyre-sizes.store') }}" method="POST">
         @csrf
       <div class="modal-body">
 
         <div class="form-group">
-          <label for="name">Vendor Name</label>
-          <input name="name" id="name" class="form-control @error('name') is-invalid @enderror" autofocus>
-          @error('name')
+          <label for="description">Description</label>
+          <input name="description" id="description" class="form-control @error('description') is-invalid @enderror" autofocus>
+          @error('description')
             <div class="invalid-feedback">
               {{ $message }}
             </div>
@@ -85,13 +85,13 @@
 
 <script>
   $(function () {
-    $("#vendors-table").DataTable({
+    $("#tyresize-table").DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('suppliers.data') }}',
+      ajax: '{{ route('tyre-sizes.data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
-        {data: 'name'},
+        {data: 'description'},
         {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,

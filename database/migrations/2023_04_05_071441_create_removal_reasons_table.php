@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('documents', function (Blueprint $table) {
+        Schema::create('removal_reasons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('supplier_id');
-            $table->string('type');
-            $table->string('number')->nullable();
-            $table->string('filename')->nullable();
-            $table->text('remarks')->nullable();
-            $table->foreignId('created_by');
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('documents');
+        Schema::dropIfExists('removal_reasons');
     }
 };

@@ -5,16 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Specification extends Model
+class Pattern extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'name',
     ];
-
-    public function suppliers()
-    {
-        return $this->belongsToMany(Supplier::class, 'suppliers_specifications');
-    }
 }

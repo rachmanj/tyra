@@ -1,7 +1,7 @@
 <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#modal-edit-{{ $model->id }}">edit</button>
 
 {{-- destroy button with alert confirmation --}}
-<form action="{{ route('specifications.destroy', $model->id) }}" method="POST" class="d-inline">
+<form action="{{ route('patterns.destroy', $model->id) }}" method="POST" class="d-inline">
     @csrf @method('DELETE')
     <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want delete this record?')">delete</button>
 </form>
@@ -16,7 +16,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('specifications.update', $model->id) }}" method="POST">
+            <form action="{{ route('patterns.update', $model->id) }}" method="POST">
                 @csrf @method('PUT')
                 <div class="modal-body">
                     <div class="form-group">

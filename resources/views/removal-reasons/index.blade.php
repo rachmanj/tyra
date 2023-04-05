@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-  Specifications  
+  Removal Reasons  
 @endsection
 
 @section('breadcrumb_title')
-    specifications
+    removal-reasons
 @endsection
 
 @section('content')
@@ -14,15 +14,15 @@
 
     <div class="card">
       <div class="card-header">
-        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Specification</button>
+        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Removal Reason</button>
       </div>  <!-- /.card-header -->
      
       <div class="card-body">
-        <table id="specifications-table" class="table table-bordered table-striped">
+        <table id="removal-table" class="table table-bordered table-striped">
           <thead>
           <tr>
             <th>#</th>
-            <th>Name</th>
+            <th>Description</th>
             <th></th>
           </tr>
           </thead>
@@ -37,19 +37,19 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title"> New Specification</h4>
+        <h4 class="modal-title"> New Removal Reason</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('specifications.store') }}" method="POST">
+      <form action="{{ route('removal-reasons.store') }}" method="POST">
         @csrf
       <div class="modal-body">
 
         <div class="form-group">
-          <label for="name">Name</label>
-          <input name="name" id="name" class="form-control @error('name') is-invalid @enderror" autofocus>
-          @error('name')
+          <label for="description">Description</label>
+          <input name="description" id="description" class="form-control @error('description') is-invalid @enderror" autofocus>
+          @error('description')
             <div class="invalid-feedback">
               {{ $message }}
             </div>
@@ -85,13 +85,13 @@
 
 <script>
   $(function () {
-    $("#specifications-table").DataTable({
+    $("#removal-table").DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('specifications.data') }}',
+      ajax: '{{ route('removal-reasons.data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
-        {data: 'name'},
+        {data: 'description'},
         {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,

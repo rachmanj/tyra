@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-  Brands  
+  Patterns  
 @endsection
 
 @section('breadcrumb_title')
-    brands
+    patterns
 @endsection
 
 @section('content')
@@ -14,11 +14,11 @@
 
     <div class="card">
       <div class="card-header">
-        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Brand</button>
+        <button href="#" class="btn btn-sm btn-primary" data-toggle="modal" data-target="#modal-create"><i class="fas fa-plus"></i> Pattern</button>
       </div>  <!-- /.card-header -->
      
       <div class="card-body">
-        <table id="specifications-table" class="table table-bordered table-striped">
+        <table id="patterns-table" class="table table-bordered table-striped">
           <thead>
           <tr>
             <th>#</th>
@@ -37,12 +37,12 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title"> New Brand</h4>
+        <h4 class="modal-title"> New Pattern</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form action="{{ route('specifications.store') }}" method="POST">
+      <form action="{{ route('patterns.store') }}" method="POST">
         @csrf
       <div class="modal-body">
 
@@ -85,10 +85,10 @@
 
 <script>
   $(function () {
-    $("#specifications-table").DataTable({
+    $("#patterns-table").DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('specifications.data') }}',
+      ajax: '{{ route('patterns.data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
         {data: 'name'},

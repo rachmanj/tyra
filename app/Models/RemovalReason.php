@@ -5,16 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Brand extends Model
+class RemovalReason extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'name',
+        'description',
     ];
-
-    public function suppliers()
-    {
-        return $this->belongsToMany(Supplier::class, 'suppliers_brands');
-    }
 }

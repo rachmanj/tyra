@@ -1,7 +1,7 @@
 <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#modal-edit-{{ $model->id }}">edit</button>
 
 {{-- destroy button with alert confirmation --}}
-<form action="{{ route('legalitas_types.destroy', $model->id) }}" method="POST" class="d-inline">
+<form action="{{ route('tyre-sizes.destroy', $model->id) }}" method="POST" class="d-inline">
     @csrf @method('DELETE')
     <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want delete this record?')">delete</button>
 </form>
@@ -11,18 +11,18 @@
     <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Edit {{ $model->name }}</h4>
+                <h4 class="modal-title">Edit Size</h4>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{{ route('legalitas_types.update', $model->id) }}" method="POST">
+            <form action="{{ route('tyre-sizes.update', $model->id) }}" method="POST">
                 @csrf @method('PUT')
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="name">Name</label>
-                        <input name="name" id="name" class="form-control @error('name') is-invalid @enderror" value="{{ $model->name }}" autofocus>
-                        @error('name')
+                        <label for="description">Name</label>
+                        <input name="description" value="{{ old('description', $model->description) }}" id="description" class="form-control @error('description') is-invalid @enderror" value="{{ $model->name }}" autofocus>
+                        @error('description')
                             <div class="invalid-feedback">
                                 {{ $message }}
                             </div>

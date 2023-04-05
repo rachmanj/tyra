@@ -1,14 +1,15 @@
 <?php
 
-
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\LegalitasTypeController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PatternController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\RemovalReasonController;
 use App\Http\Controllers\RoleController;
-use App\Http\Controllers\SpecificationController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TyreSizeController;
+use App\Http\Controllers\TyreBrandController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -45,28 +46,23 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('index');
     });
 
-    // SUPPLIERS
-    Route::prefix('suppliers')->name('suppliers.')->group(function () {
-        Route::get('data', [SupplierController::class, 'data'])->name('data');
-        Route::get('/{supplier_id}/legalitas', [SupplierController::class, 'legalitas'])->name('legalitas');
-        Route::post('/{supplier_id}/legalitas/store', [SupplierController::class, 'legalitas_store'])->name('legalitas.store');
-        Route::put('/legalitas/{document_id}/update', [SupplierController::class, 'legalitas_update'])->name('legalitas.update');
-        Route::delete('/legalitas/{document_id}/delete', [SupplierController::class, 'legalitas_destroy'])->name('legalitas.destroy');
-        Route::post('/contact/store', [SupplierController::class, 'contact_store'])->name('contact.store');
-        Route::put('/contact/{contact_id}/update', [SupplierController::class, 'contact_update'])->name('contact.update');
-        Route::delete('/contact/{contact_id}/delete', [SupplierController::class, 'contact_destroy'])->name('contact.destroy');
-    });
+    // PATTERNS
+    Route::get('patterns/data', [PatternController::class, 'data'])->name('patterns.data');
+    Route::resource('patterns', PatternController::class);
+
+    // REMOVAL REASONS
+    Route::get('removal-reasons/data', [RemovalReasonController::class, 'data'])->name('removal-reasons.data');
+    Route::resource('removal-reasons', RemovalReasonController::class);
+
+    // TYRE SIZE
+    Route::get('tyre-sizes/data', [TyreSizeController::class, 'data'])->name('tyre-sizes.data');
+    Route::resource('tyre-sizes', TyreSizeController::class);
+
+    // TYRE BRAND
+    Route::get('tyre-brands/data', [TyreBrandController::class, 'data'])->name('tyre-brands.data');
+    Route::resource('tyre-brands', TyreBrandController::class);
+
+    // SUPPLIERS / VENDORS
+    Route::get('suppliers/data', [SupplierController::class, 'data'])->name('suppliers.data');
     Route::resource('suppliers', SupplierController::class);
-
-    // SPECIFICATIONS
-    Route::prefix('specifications')->name('specifications.')->group(function () {
-        Route::get('data', [SpecificationController::class, 'data'])->name('data');
-    });
-    Route::resource('specifications', SpecificationController::class);
-
-    // LEGALITAS TYPES
-    Route::prefix('legalitas_types')->name('legalitas_types.')->group(function () {
-        Route::get('data', [LegalitasTypeController::class, 'data'])->name('data');
-    });
-    Route::resource('legalitas_types', LegalitasTypeController::class);
 });
