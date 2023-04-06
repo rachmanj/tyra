@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\PatternController;
 use App\Http\Controllers\PermissionController;
@@ -65,4 +66,10 @@ Route::middleware('auth')->group(function () {
     // SUPPLIERS / VENDORS
     Route::get('suppliers/data', [SupplierController::class, 'data'])->name('suppliers.data');
     Route::resource('suppliers', SupplierController::class);
+
+    // EQUIPMENTS
+    Route::prefix('equipments')->name('equipments.')->group(function () {
+        Route::get('/data', [EquipmentController::class, 'data'])->name('data');
+        Route::get('/', [EquipmentController::class, 'index'])->name('index');
+    });
 });

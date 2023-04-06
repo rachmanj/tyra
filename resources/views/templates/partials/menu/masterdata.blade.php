@@ -6,5 +6,6 @@
       <li><a href="{{ route('tyre-sizes.index') }}" class="dropdown-item">Tyre Size</a></li>
       <li><a href="{{ route('tyre-brands.index') }}" class="dropdown-item">Tyre Brands</a></li>
       <li><a href="{{ route('suppliers.index') }}" class="dropdown-item">Vendors</a></li>
+      <li><a href="{{ route('equipments.index') }}" class="dropdown-item">Equipments</a></li>
     </ul>
 </li>
