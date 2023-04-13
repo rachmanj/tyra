@@ -21,6 +21,11 @@ class EquipmentController extends Controller
         $response = $client->request('GET', $url);
         $data = json_decode($response->getBody()->getContents(), true)['data'];
 
+        // filter data only for certain project
+        // $data = array_filter($data, function ($item) {
+        //     return $item['project'] == '011C';
+        // });
+
         return datatables()->of($data)
             ->addIndexColumn()
             ->toJson();

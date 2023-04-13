@@ -3,14 +3,17 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MigrationController;
 use App\Http\Controllers\PatternController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RemovalReasonController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TyreSizeController;
 use App\Http\Controllers\TyreBrandController;
+use App\Http\Controllers\TyreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -71,5 +74,31 @@ Route::middleware('auth')->group(function () {
     Route::prefix('equipments')->name('equipments.')->group(function () {
         Route::get('/data', [EquipmentController::class, 'data'])->name('data');
         Route::get('/', [EquipmentController::class, 'index'])->name('index');
+    });
+
+    // TYRES
+    Route::prefix('tyres')->name('tyres.')->group(function () {
+        Route::get('/data', [TyreController::class, 'data'])->name('data');
+        Route::get('/migration', [TyreController::class, 'migration'])->name('migration');
+    });
+    Route::resource('tyres', TyreController::class);
+
+    // TRANSACTIONS
+    Route::prefix('transactions')->name('transactions.')->group(function () {
+        Route::get('/data', [TransactionController::class, 'data'])->name('data');
+    });
+    Route::resource('transactions', TransactionController::class);
+
+    // MIGRATIONS
+    Route::prefix('migrations')->name('migrations.')->group(function () {
+        // TYRES
+        Route::get('/tyres', [MigrationController::class, 'tyres'])->name('tyres');
+        Route::get('/tyres/data', [MigrationController::class, 'tyres_data'])->name('tyres.data');
+        Route::get('/tyres/migrate', [MigrationController::class, 'tyres_migrate'])->name('tyres.migrate');
+
+        // TRANSACTIONS
+        Route::get('/transactions', [MigrationController::class, 'transactions'])->name('transactions');
+        Route::get('/transactions/data', [MigrationController::class, 'transactions_data'])->name('transactions.data');
+        Route::get('/transactions/migrate', [MigrationController::class, 'transactions_migrate'])->name('transactions.migrate');
     });
 });

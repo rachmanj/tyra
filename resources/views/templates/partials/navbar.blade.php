@@ -17,7 +17,7 @@
           <a href="{{ route('dashboard.index') }}" class="nav-link">Dashboard</a>
         </li>
 
-
+        @include('templates.partials.menu.tyres')
         @include('templates.partials.menu.masterdata')
 
         @can('access_admin')
