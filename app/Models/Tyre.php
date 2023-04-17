@@ -38,4 +38,16 @@ class Tyre extends Model
             'supplier' => 'n/a'
         ]);
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id')->withDefault([
+            'name' => 'n/a'
+        ]);
+    }
 }

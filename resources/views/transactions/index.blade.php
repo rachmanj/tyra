@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-  Tyres  
+  Transactions  
 @endsection
 
 @section('breadcrumb_title')
-    tyres
+    tx
 @endsection
 
 @section('content')
@@ -14,7 +14,7 @@
 
     <div class="card">
       <div class="card-header">
-        <a href="{{ route('tyres.create') }}" class="btn btn-sm btn-primary"><i class="fas fa-plus"></i> Tyre</a>
+        {{-- <a href="{{ route('tyres.create') }}" class="btn btn-sm btn-primary" ><i class="fas fa-plus"></i> Tyre</a> --}}
       </div>  <!-- /.card-header -->
      
       <div class="card-body">
@@ -23,11 +23,11 @@
           <tr>
             <th>#</th>
             <th>SN</th>
-            <th>Brand</th>
-            <th>Vendor</th>
-            <th>Price</th>
-            <th>Target (hours)</th>
-            <th>CPH</th>
+            <th>Date</th>
+            <th>Unit No</th>
+            <th>Tx Type</th>
+            <th>HM</th>
+            <th>Reason</th>
             <th></th>
           </tr>
           </thead>
@@ -61,21 +61,21 @@
     $("#tyres-table").DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('tyres.data') }}',
+      ajax: '{{ route('transactions.data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
-        {data: 'serial_number'},
-        {data: 'brand'},
-        {data: 'vendor'},
-        {data: 'price'},
-        {data: 'hours_target'},
-        {data: 'cph'},
+        {data: 'tyre_sn'},
+        {data: 'date'},
+        {data: 'unit_no'},
+        {data: 'tx_type'},
+        {data: 'hm'},
+        {data: 'removal_reason'},
         {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,
       columnDefs: [
               {
-                "targets": [4, 5, 6],
+                "targets": [5],
                 "className": "text-right"
               },
         ]

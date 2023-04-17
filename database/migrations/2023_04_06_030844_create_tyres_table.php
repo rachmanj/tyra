@@ -33,6 +33,7 @@ return new class extends Migration
             $table->integer('hours_target')->nullable();
             $table->string('TyreCPH')->nullable(); // migration
             $table->date('waranty_exp_date')->nullable(); // waranty expire date
+            $table->foreignId('created_by')->nullable();
             $table->timestamps();
         });
     }

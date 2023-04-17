@@ -13,22 +13,24 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('tyre_id');
+            $table->date('date')->nullable();
             $table->string('unit_no')->nullable();
+            $table->enum('tx_type', ['ON', 'OFF'])->nullable(); // ON = installation, OFF = removal
             $table->integer('position')->nullable();
-            $table->date('on_date')->nullable();
-            $table->integer('on_hm')->nullable();
-            $table->integer('on_rtd1')->nullable();
-            $table->integer('on_rtd2')->nullable();
-            $table->date('off_date')->nullable();
-            $table->integer('off_rtd1')->nullable();
-            $table->integer('off_rtd2')->nullable();
-            $table->integer('lifetime')->nullable(); // lifetime = off_hm - on_hm
+            $table->integer('hm')->nullable();
+            $table->integer('rtd1')->nullable();
+            $table->integer('rtd2')->nullable();
+            // $table->date('off_date')->nullable();
+            // $table->integer('off_rtd1')->nullable();
+            // $table->integer('off_rtd2')->nullable();
+            // $table->integer('lifetime')->nullable(); // lifetime = off_hm - on_hm
             $table->string('project')->nullable();
             $table->foreignId('removal_reason_id')->nullable();
             $table->string('action')->nullable();
-            $table->foreignId('last_updated_by')->nullable();
-
-
+            $table->string('remark')->nullable();
+            $table->foreignId('created_by')->nullable();
+            $table->foreignId('updated_by')->nullable();
             $table->timestamps();
         });
     }

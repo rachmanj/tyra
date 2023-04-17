@@ -79,7 +79,8 @@ Route::middleware('auth')->group(function () {
     // TYRES
     Route::prefix('tyres')->name('tyres.')->group(function () {
         Route::get('/data', [TyreController::class, 'data'])->name('data');
-        Route::get('/migration', [TyreController::class, 'migration'])->name('migration');
+        Route::get('/{id}/data', [TyreController::class, 'histories_data'])->name('histories.data');
+        Route::delete('/histories/{transaction_id}', [TyreController::class, 'transaction_destroy'])->name('transaction.destroy');
     });
     Route::resource('tyres', TyreController::class);
 
