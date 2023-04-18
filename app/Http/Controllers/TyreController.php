@@ -79,8 +79,9 @@ class TyreController extends Controller
         $equipments = app(ToolController::class)->getEquipments($tyre->current_project);
         $removal_reasons = RemovalReason::orderBy('description', 'asc')->get();
         $last_transaction = app(ToolController::class)->getLastTransaction($tyre->id);
+        $current_hm = app(ToolController::class)->getHMTyre($id);
 
-        return view('tyres.show', compact('tyre', 'equipments', 'removal_reasons', 'last_transaction'));
+        return view('tyres.show', compact('tyre', 'equipments', 'removal_reasons', 'last_transaction', 'current_hm'));
     }
 
     public function edit($id)

@@ -17,7 +17,14 @@
                 <a href="{{ route('tyres.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-arrow-left"></i> Back</a>
             </div>
             <div class="card-body">
-                @include('tyres.show_info')
+              <div class="row">
+                <div class="col-10">
+                  @include('tyres.show_info')
+                </div>
+                <div class="col-2">
+                  <h5>Total HM : </h5><h3> <strong>{{ $current_hm }}</strong></h3>
+                </div>
+              </div>
             </div>
 
             {{-- INSTALL REMOVE BUTTONS --}}

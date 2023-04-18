@@ -44,4 +44,32 @@ class ToolController extends Controller
             return null;
         }
     }
+
+    public function getFirstTransaction($tyre_id)
+    {
+        $first_transaction = Transaction::where('tyre_id', $tyre_id)->orderBy('id', 'asc')->first();
+
+        if ($first_transaction) {
+            return $first_transaction;
+        } else {
+            return null;
+        }
+    }
+
+    public function getHMTyre($tyre_id)
+    {
+        $first_transaction = $this->getFirstTransaction($tyre_id);
+        $last_transaction = $this->getLastTransaction($tyre_id);
+
+        if ($first_transaction && $last_transaction) {
+            $first_transaction_date = $first_transaction->hm;
+            $last_transaction_date = $last_transaction->hm;
+
+            $diff = $last_transaction_date - $first_transaction_date;
+
+            return $diff;
+        } else {
+            return null;
+        }
+    }
 }
