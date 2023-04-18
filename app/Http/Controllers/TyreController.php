@@ -154,6 +154,9 @@ class TyreController extends Controller
             ->editColumn('price', function ($tyre) {
                 return number_format($tyre->price, 0);
             })
+            ->editColumn('hours_target', function ($tyre) {
+                return number_format($tyre->hours_target, 0);
+            })
             ->addColumn('cph', function ($tyre) {
                 if ($tyre->price && $tyre->hours_target) {
                     return number_format($tyre->price / $tyre->hours_target, 0);

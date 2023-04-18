@@ -37,6 +37,7 @@ class TransactionController extends Controller
         Transaction::create(array_merge($validated, [
             'project' => $tyre->current_project,
             'tx_type' => $tx_type,
+            'removal_reason_id' => $request->removal_reason_id,
             'remark' => $request->remark,
             'created_by' => auth()->user()->id
         ]));
@@ -50,11 +51,17 @@ class TransactionController extends Controller
 
     public function data()
     {
-        $transactions = Transaction::orderBy('date', 'asc')->get();
+        $transactions = Transaction::orderBy('date', 'desc')->get();
 
         return datatables()->of($transactions)
             ->addColumn('tyre_sn', function ($transaction) {
                 return $transaction->tyre->serial_number;
+            })
+            ->editColumn('date', function ($history) {
+                return date('d-M-Y', strtotime($history->date));
+            })
+            ->editColumn('hm', function ($history) {
+                return number_format($history->hm, 0);
             })
             ->addColumn('removal_reason', function ($transaction) {
                 return $transaction->removalReason->description;

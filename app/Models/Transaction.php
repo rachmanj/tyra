@@ -18,6 +18,8 @@ class Transaction extends Model
 
     public function removalReason()
     {
-        return $this->belongsTo(RemovalReason::class);
+        return $this->belongsTo(RemovalReason::class)->withDefault([
+            'description' => 'N/A'
+        ]);
     }
 }
