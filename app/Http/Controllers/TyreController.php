@@ -45,8 +45,9 @@ class TyreController extends Controller
         $brands = TyreBrand::orderBy('name', 'asc')->get();
         $patterns = Pattern::orderBy('name', 'asc')->get();
         $suppliers = Supplier::orderBy('name', 'asc')->get();
+        $projects = app(ToolController::class)->getProjects();
 
-        return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers'));
+        return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers', 'projects'));
     }
 
     public function store(Request $request)
