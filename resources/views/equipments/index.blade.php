@@ -50,22 +50,30 @@
 <script src="{{ asset('adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
 <script src="{{ asset('adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('adminlte/plugins/datatables/datatables.min.js') }}"></script>
+{{-- axios --}}
+<script src="{{ asset('adminlte/axios/axios.min.js') }}"></script>
 
 <script>
-  $(function () {
-    $("#equipments-table").DataTable({
-      processing: true,
-      serverSide: true,
-      ajax: '{{ route('equipments.data') }}',
-      columns: [
-        {data: 'DT_RowIndex', orderable: false, searchable: false},
-        {data: 'unit_code'},
-        {data: 'project'},
-        {data: 'plant_group'},
-        {data: 'model'},
-      ],
-      fixedHeader: true,
-    })
+   // call equipments api using axios
+   let url = "{{ env('URL_EQUIPMENTS') }}";
+
+axios.get(url)
+.then(function (response) {
+  // handle success
+  console.log(response.data);
+  // call datatable
+  $('#equipments-table').DataTable({
+    data: response.data.data,
+    columns: [
+      { data: null, render: function (data, type, row, meta) {
+        return meta.row + meta.settings._iDisplayStart + 1;
+      } },
+      { data: 'unit_code' },
+      { data: 'project' },
+      { data: 'plant_group' },
+      { data: 'model' },
+    ]
   });
+})
 </script>
 @endsection
