@@ -87,12 +87,11 @@
     $('.select2bs4').select2({
       theme: 'bootstrap4'
     })
-  })
 
-  // get equipments list
+    // get equipments list
   let url  = "{{ env('URL_ARKFLEET')}}/equipments"
 
-  axios.get(url)
+      axios.get(url)
         .then(function(response) {
             let equipments = response.data.data;
             let select = document.getElementById('unit_no');
@@ -117,9 +116,35 @@
         });
 
 
+    $("#table-histories").DataTable({
+      processing: true,
+      serverSide: true,
+      ajax: '{{ route('tyres.histories.data', $tyre->id) }}',
+      columns: [
+        {data: 'DT_RowIndex', orderable: false, searchable: false},
+        {data: 'date'},
+        {data: 'unit_no'},
+        {data: 'tx_type'},
+        {data: 'position'},
+        {data: 'hm'},
+        {data: 'rtd1'},
+        {data: 'rtd2'},
+        {data: 'remark'},
+        {data: 'action_button', orderable: false, searchable: false},
+      ],
+      fixedHeader: true,
+      columnDefs: [
+              {
+                "targets": [4, 5, 6, 7],
+                "className": "text-right"
+              },
+        ]
+    })
+
+  })
 </script>
 
-<script>
+{{-- <script>
   $(function () {
     $("#table-histories").DataTable({
       processing: true,
@@ -146,5 +171,5 @@
         ]
     })
   });
-</script>
+</script> --}}
 @endsection
