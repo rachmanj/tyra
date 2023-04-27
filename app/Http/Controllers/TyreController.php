@@ -13,27 +13,6 @@ use Illuminate\Http\Request;
 
 class TyreController extends Controller
 {
-    /*
-    public function __construct()
-    {
-        // get equipment from arkFleet
-        $url = env('URL_EQUIPMENTS');
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $url);
-        $equipments = json_decode($response->getBody()->getContents(), true)['data'];
-
-        // get projects from arkFleet
-        $url = env('URL_PROJECTS');
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $url);
-        $projects = json_decode($response->getBody()->getContents(), true)['data'];
-
-        view()->share('equipments', $equipments);
-
-        view()->share('projects', $projects);
-    }
-    */
-
     public function index()
     {
         return view('tyres.index');
@@ -45,9 +24,10 @@ class TyreController extends Controller
         $brands = TyreBrand::orderBy('name', 'asc')->get();
         $patterns = Pattern::orderBy('name', 'asc')->get();
         $suppliers = Supplier::orderBy('name', 'asc')->get();
-        $projects = app(ToolController::class)->getProjects();
+        // $projects = app(ToolController::class)->getProjects();
 
-        return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers', 'projects'));
+        // return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers', 'projects'));
+        return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers'));
     }
 
     public function store(Request $request)
@@ -77,12 +57,15 @@ class TyreController extends Controller
     public function show($id)
     {
         $tyre = Tyre::find($id);
-        $equipments = app(ToolController::class)->getEquipments($tyre->current_project);
+
+        // $equipments = app(ToolController::class)->getEquipments($tyre->current_project);
+
         $removal_reasons = RemovalReason::orderBy('description', 'asc')->get();
         $last_transaction = app(ToolController::class)->getLastTransaction($tyre->id);
         $current_hm = app(ToolController::class)->getHMTyre($id);
 
-        return view('tyres.show', compact('tyre', 'equipments', 'removal_reasons', 'last_transaction', 'current_hm'));
+        // return view('tyres.show', compact('tyre', 'equipments', 'removal_reasons', 'last_transaction', 'current_hm'));
+        return view('tyres.show', compact('tyre', 'removal_reasons', 'last_transaction', 'current_hm'));
     }
 
     public function edit($id)
@@ -183,5 +166,12 @@ class TyreController extends Controller
             ->addColumn('action_button', 'tyres.histories_action')
             ->rawColumns(['action_button'])
             ->toJson();
+    }
+
+    public function test()
+    {
+        $equipments = app(ToolController::class)->getEquipments('APS');
+
+        return $equipments;
     }
 }

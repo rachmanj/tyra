@@ -55,12 +55,10 @@
 
 <script>
    // call equipments api using axios
-   let url = "{{ env('URL_EQUIPMENTS') }}";
+   let url = "{{ env('URL_ARKFLEET') }}/equipments";
 
 axios.get(url)
 .then(function (response) {
-  // handle success
-  console.log(response.data);
   // call datatable
   $('#equipments-table').DataTable({
     data: response.data.data,

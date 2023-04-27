@@ -75,6 +75,8 @@
 <script src="{{ asset('adminlte/plugins/datatables/datatables.min.js') }}"></script>
 <!-- Select2 -->
 <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
+{{-- axios --}}
+<script src="{{ asset('adminlte/axios/axios.min.js') }}"></script>
   
 <script>
   $(function () {
@@ -86,6 +88,35 @@
       theme: 'bootstrap4'
     })
   })
+
+  // get equipments list
+  let url  = "{{ env('URL_ARKFLEET')}}/equipments"
+
+  axios.get(url)
+        .then(function(response) {
+            let equipments = response.data.data;
+            let select = document.getElementById('unit_no');
+
+            for (let i = 0; i < equipments.length; i++) {
+                let equipment = equipments[i];
+                let option = document.createElement('option');
+                option.value = equipment.unit_code;
+                option.text = equipment.unit_code + ' - ' + equipment.plant_group + ' - ' + equipment.model;
+                select.add(option);
+            }
+
+            // set selected project
+            let unit_no = "{{ old('unit_no') }}";
+
+            if (unit_no) {
+                $('#unit_no').val(unit_no).trigger('change');
+            }
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+
+
 </script>
 
 <script>

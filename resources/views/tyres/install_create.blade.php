@@ -29,11 +29,11 @@
             <div class="col-8">
                 <div class="form-group">
                     <label for="unit_no">Unit No</label>
-                    <select name="unit_no" class="form-control select2bs4 @error('unit_no') is-invalid @enderror">
+                    <select id="unit_no" name="unit_no" class="form-control select2bs4 @error('unit_no') is-invalid @enderror">
                         <option value="">-- select unit no --</option>
-                        @foreach ($equipments as $equipment)
+                        {{-- @foreach ($equipments as $equipment)
                         <option value="{{ $equipment['unit_code'] }}" {{ $equipment['unit_code'] === old('unit_no') ? "selected" : "" }}>{{ $equipment['unit_code'] . ' - ' . $equipment['plant_group'] . ' - ' . $equipment['model']}}</option>
-                        @endforeach
+                        @endforeach --}}
                     </select>
                     @error('unit_no')
                         <div class="invalid-feedback">
