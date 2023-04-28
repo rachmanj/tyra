@@ -88,30 +88,33 @@
       theme: 'bootstrap4'
     })
 
-// get equipments list using ajax
+    // get equipments list
   let url  = "{{ env('URL_ARKFLEET')}}/equipments"
 
-  $.get(url, function(data, status){
-    console.log(data.data)
-    
-    let equipments = data.data
-    let select = document.getElementById('unit_no')
+      axios.get(url)
+        .then(function(response) {
+            let equipments = response.data.data;
+            let select = document.getElementById('unit_no');
 
-    for (let i = 0; i < equipments.length; i++) {
-      let equipment = equipments[i]
-      let option = document.createElement('option')
-      option.value = equipment.unit_code
-      option.text = equipment.unit_code
-      select.add(option)
-    }
+            for (let i = 0; i < equipments.length; i++) {
+                let equipment = equipments[i];
+                let option = document.createElement('option');
+                option.value = equipment.unit_code;
+                option.text = equipment.unit_code + ' - ' + equipment.plant_group + ' - ' + equipment.model;
+                select.add(option);
+            }
 
-    // let selected equipment
-    let unit_no = "{{ old('unit_no') }}"
+            // set selected project
+            let unit_no = "{{ old('unit_no') }}";
 
-    if (unit_no) {
-      $('#unit_no').val(unit_no).trigger('change')
-    }
-  })
+            if (unit_no) {
+                $('#unit_no').val(unit_no).trigger('change');
+            }
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
+
 
     $("#table-histories").DataTable({
       processing: true,
