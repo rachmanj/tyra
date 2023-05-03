@@ -22,7 +22,7 @@
                   @include('tyres.show_info')
                 </div>
                 <div class="col-2">
-                  <h5>Total HM : </h5><h3> <strong>{{ $current_hm }}</strong></h3>
+                  <h5>Total HM : </h5><h3> <strong>{{ $tyre->accumulated_hm }}</strong></h3>
                 </div>
               </div>
             </div>
@@ -92,16 +92,27 @@
   let url  = "{{ env('URL_ARKFLEET')}}/equipments"
 
   $.get(url, function(data, status){
-    console.log(data.data)
+    
     
     let equipments = data.data
+    //  get value of project_equipment from controller 
+    let project_equipment = "{{ $project_equipment }}"
+    console.log(project_equipment)
+    
+    let filtered_equipments = []
+    if (project_equipment == 'all') {
+      filtered_equipments = equipments
+    } else {
+      filtered_equipments = equipments.filter(equipment => equipment.project == project_equipment)
+    }
+    console.log(filtered_equipments)
     let select = document.getElementById('unit_no')
 
-    for (let i = 0; i < equipments.length; i++) {
-      let equipment = equipments[i]
+    for (let i = 0; i < filtered_equipments.length; i++) {
+      let equipment = filtered_equipments[i]
       let option = document.createElement('option')
       option.value = equipment.unit_code
-      option.text = equipment.unit_code
+      option.text = equipment.unit_code + ' - ' + equipment.plant_group + ' - ' + equipment.model
       select.add(option)
     }
 

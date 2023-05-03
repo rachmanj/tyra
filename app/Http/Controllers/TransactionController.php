@@ -27,19 +27,26 @@ class TransactionController extends Controller
 
         $tyre = Tyre::find($request->tyre_id);
 
-        if ($request->form_type == 'show_tyre_install')
+        if ($request->form_type == 'show_tyre_install') {
             $tx_type = 'ON';
-        else if ($request->form_type == 'show_tyre_remove')
+        } else if ($request->form_type == 'show_tyre_remove') {
             $tx_type = 'OFF';
-        else
+            // get last tranasction hm of the tyre
+            $last_transaction = app(ToolController::class)->getLastTransaction($tyre->id);
+            // update tyre accumulated_hm at tyres table
+            $tyre->update([
+                'accumulated_hm' => $tyre->accumulated_hm + ($request->hm - $last_transaction->hm),
+            ]);
+        } else {
             $tx_type = $request->tx_type;
+        }
 
         Transaction::create(array_merge($validated, [
             'project' => $tyre->current_project,
             'tx_type' => $tx_type,
             'removal_reason_id' => $request->removal_reason_id,
             'remark' => $request->remark,
-            'created_by' => auth()->user()->id
+            'created_by' => auth()->user()->id,
         ]));
 
         if ($request->form_type == 'show_tyre_install' || $request->form_type == 'show_tyre_remove')
