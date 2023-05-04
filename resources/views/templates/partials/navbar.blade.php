@@ -20,6 +20,10 @@
         @include('templates.partials.menu.tyres')
         @include('templates.partials.menu.masterdata')
 
+        <li class="nav-item">
+          <a href="{{ route('reports.index') }}" class="nav-link">Reports</a>
+        </li>
+
         @can('access_admin')
           @include('templates.partials.menu.admin')
         @endcan

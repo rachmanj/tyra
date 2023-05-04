@@ -136,15 +136,18 @@
         {data: 'position'},
         {data: 'hm'},
         {data: 'rtd1'},
-        {data: 'rtd2'},
-        {data: 'remark'},
+        {data: 'removal_reason'},
         {data: 'action_button', orderable: false, searchable: false},
       ],
       fixedHeader: true,
       columnDefs: [
               {
-                "targets": [4, 5, 6, 7],
+                "targets": [4, 5],
                 "className": "text-right"
+              },
+              {
+                "targets": [6],
+                "className": "text-center"
               },
         ]
     })

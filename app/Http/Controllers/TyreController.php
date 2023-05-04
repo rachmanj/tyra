@@ -172,6 +172,14 @@ class TyreController extends Controller
             ->editColumn('date', function ($history) {
                 return date('d-M-Y', strtotime($history->date));
             })
+            ->editColumn('rtd1', function ($history) {
+                $rtd1 = $history->rtd1 ? $history->rtd1 : "n/a";
+                $rtd2 = $history->rtd2 ? $history->rtd2 : "n/a";
+                return $rtd1 . " | " . $rtd2;
+            })
+            ->addColumn('removal_reason', function ($history) {
+                return $history->removal_reason_id ? $history->removalReason->description : "n/a";
+            })
             ->addIndexColumn()
             ->addColumn('action_button', 'tyres.histories_action')
             ->rawColumns(['action_button'])

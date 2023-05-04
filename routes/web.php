@@ -8,6 +8,7 @@ use App\Http\Controllers\PatternController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RemovalReasonController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransactionController;
@@ -103,5 +104,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/transactions', [MigrationController::class, 'transactions'])->name('transactions');
         Route::get('/transactions/data', [MigrationController::class, 'transactions_data'])->name('transactions.data');
         Route::get('/transactions/migrate', [MigrationController::class, 'transactions_migrate'])->name('transactions.migrate');
+    });
+
+    //REPORTS
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+
+        // TYRE REKAPS
+        Route::prefix('tyre-rekaps')->name('tyre-rekaps.')->group(function () {
+            Route::get('/', [ReportController::class, 'tyre_rekaps'])->name('index');
+            Route::get('/data', [ReportController::class, 'tyre_rekaps_data'])->name('data');
+            Route::get('/{id}', [ReportController::class, 'tyre_rekaps_show'])->name('show');
+            Route::get('/export', [ReportController::class, 'tyre_rekaps_export'])->name('export');
+            Route::get('/{id}/data', [ReportController::class, 'tyre_rekaps_history_data'])->name('histories.data');
+        });
     });
 });

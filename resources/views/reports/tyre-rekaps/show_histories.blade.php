@@ -13,7 +13,7 @@
           <th>HM</th>
           <th>RTD1 | RTD2</th>
           <th>Removal R</th>
-          <th></th>
+          <th>Remark</th>
         </tr>
       </thead>
     </table>
