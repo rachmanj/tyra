@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\TyreRekapExport;
 use App\Models\Transaction;
 use App\Models\Tyre;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
 {
@@ -27,7 +29,7 @@ class ReportController extends Controller
 
     public function tyre_rekaps_export()
     {
-        return view('reports.tyre-rekaps.export');
+        return Excel::download(new TyreRekapExport, 'tyres_rekaps.xlsx');
     }
 
     public function tyre_rekaps_data()
@@ -95,4 +97,5 @@ class ReportController extends Controller
             ->addIndexColumn()
             ->toJson();
     }
+
 }

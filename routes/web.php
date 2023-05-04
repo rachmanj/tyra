@@ -112,10 +112,10 @@ Route::middleware('auth')->group(function () {
 
         // TYRE REKAPS
         Route::prefix('tyre-rekaps')->name('tyre-rekaps.')->group(function () {
+            Route::get('/export', [ReportController::class, 'tyre_rekaps_export'])->name('export');
             Route::get('/', [ReportController::class, 'tyre_rekaps'])->name('index');
             Route::get('/data', [ReportController::class, 'tyre_rekaps_data'])->name('data');
             Route::get('/{id}', [ReportController::class, 'tyre_rekaps_show'])->name('show');
-            Route::get('/export', [ReportController::class, 'tyre_rekaps_export'])->name('export');
             Route::get('/{id}/data', [ReportController::class, 'tyre_rekaps_history_data'])->name('histories.data');
         });
     });

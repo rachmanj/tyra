@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-  Tyres
+  Reports
 @endsection
 
 @section('breadcrumb_title')
-    tyres
+    tyre-rekaps
 @endsection
 
 @section('content')
@@ -14,7 +14,7 @@
         <div class="card card-info">
             <div class="card-header">
                 <h3 class="card-title">Tyre Detail</h3>
-                <a href="{{ route('tyres.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-arrow-left"></i> Back</a>
+                <a href="{{ route('reports.tyre-rekaps.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-arrow-left"></i> Back</a>
             </div>
             <div class="card-body">
               <div class="row">

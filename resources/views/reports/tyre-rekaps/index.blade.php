@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-  Tyres  
+  Reports  
 @endsection
 
 @section('breadcrumb_title')
-    tyres
+    tyre-rekaps
 @endsection
 
 @section('content')

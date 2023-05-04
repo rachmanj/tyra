@@ -21,7 +21,7 @@
                 <ol>
                     <li>Tyres</li>
                     <ol>
-                        <li><a href="{{ route('reports.tyre-rekaps') }}">Tyre Rekaps</a></li>
+                        <li><a href="{{ route('reports.tyre-rekaps.index') }}">Tyre Rekaps</a></li>
                     </ol>
                 </ol>
             </div>
