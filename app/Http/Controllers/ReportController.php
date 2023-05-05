@@ -72,6 +72,11 @@ class ReportController extends Controller
                     return "n/a";
                 }
             })
+            ->addColumn('rtd', function ($tyre) {
+                $rtd1 = $tyre->getLastTransaction() ? $tyre->getLastTransaction()->rtd1 : "n/a";
+                $rtd2 = $tyre->getLastTransaction() ? $tyre->getLastTransaction()->rtd2 : "n/a";
+                return $rtd1 . " | " . $rtd2;
+            })
             ->addIndexColumn()
             ->addColumn('action', 'reports.tyre-rekaps.action')
             ->rawColumns(['action'])

@@ -29,20 +29,21 @@
 
             {{-- INSTALL REMOVE BUTTONS --}}
             <div class="card-footer">
+              @if ($tyre->is_active == 1)
               {{-- if tyre has no transactions or if the transaction type is OFF --}}
-              @if ($tyre->transactions->count() < 1 || ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'OFF'))
-              <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#tyre_install">Install Tyre</button>
-              @else
-              <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#tyre_install" disabled>Install Tyre</button>
-              @endif
-              @if ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'ON')
-              <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tyre_remove">Remove Tyre</button>
-              @else
-              <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tyre_remove" disabled>Remove Tyre</button>
-              @endif
+                @if ($tyre->transactions->count() < 1 || ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'OFF'))
+                <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#tyre_install">Install Tyre</button>
+                @else
+                <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#tyre_install" disabled>Install Tyre</button>
+                @endif
+                @if ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'ON')
+                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tyre_remove">Remove Tyre</button>
+                @else
+                <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tyre_remove" disabled>Remove Tyre</button>
+                @endif
 
               {{-- IN ACTIVE BUTTON --}}
-              @if ($tyre->is_active == 1)
+              
                 {{-- if tyre has no transactions or if the transaction type is OFF --}}
                 @if ($tyre->transactions->count() < 1 || $last_transaction && $last_transaction->tx_type == 'OFF')
                 <a href="{{ route('tyres.activate', $tyre->id)}}"   class="btn btn-sm btn-warning float-right" >In-Activate Tyre</a>

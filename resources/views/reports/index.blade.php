@@ -23,6 +23,10 @@
                     <ol>
                         <li><a href="{{ route('reports.tyre-rekaps.index') }}">Tyre Rekaps</a></li>
                     </ol>
+                    <li>Transactions</li>
+                    <ol>
+                        <li><a href="{{ route('reports.transactions.index') }}">Transaction Rekaps</a></li>
+                    </ol>
                 </ol>
             </div>
         </div>

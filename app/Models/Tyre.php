@@ -50,4 +50,13 @@ class Tyre extends Model
             'name' => 'n/a'
         ]);
     }
+
+    public function getLastTransaction()
+    {
+        if ($this->transactions()) {
+            return $this->transactions()->orderBy('id', 'desc')->first();
+        } else {
+            return null;
+        }
+    }
 }

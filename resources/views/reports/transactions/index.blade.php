@@ -1,11 +1,11 @@
 @extends('templates.main')
 
 @section('title_page')
-  Reports  
+  Report
 @endsection
 
 @section('breadcrumb_title')
-    tyre-rekaps
+    tx
 @endsection
 
 @section('content')
@@ -14,30 +14,26 @@
 
     <div class="card">
       <div class="card-header">
-        <h3 class="card-title">Tyres</h3>
+        <h3 class="card-title">Transactions</h3>
         <a href="{{ route('reports.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-arrow-left"></i> Back</a>
-        <a href="{{ route('reports.tyre-rekaps.export') }}" class="btn btn-sm btn-success mx-3 float-right"><i class="fas fa-export"></i> Export</a>
+        <a href="{{ route('reports.transactions.export') }}" class="btn btn-sm btn-success mx-3 float-right"><i class="fas fa-export"></i> Export</a>
+        <a href=""></a>
       </div>  <!-- /.card-header -->
      
       <div class="card-body">
         <table id="tyres-table" class="table table-bordered table-striped">
           <thead>
           <tr>
-            <th rowspan="2">#</th>
-            <th rowspan="2">SN</th>
-            <th rowspan="2">Brand</th>
-            <th rowspan="2">Vendor</th>
-            <th rowspan="2">Price</th>
-            <th colspan="2" class="text-center">Target</th>
-            <th colspan="2" class="text-center">Realization</th>
-            <th></th>
-          </tr>
-          <tr>
+            <th>#</th>
+            <th>SN</th>
+            <th>Date</th>
+            <th>Unit No</th>
+            <th>Tx Type</th>
+            <th>Position</th>
             <th>HM</th>
-            <th>CPH</th>
-            <th>HM</th>
-            <th>CPH</th>
-            <th></th>
+            <th>RTD1 | RTD2</th>
+            <th>Reason</th>
+            <th>Remark</th>
           </tr>
           </thead>
         </table>
@@ -70,24 +66,28 @@
     $("#tyres-table").DataTable({
       processing: true,
       serverSide: true,
-      ajax: '{{ route('reports.tyre-rekaps.data') }}',
+      ajax: '{{ route('reports.transactions.data') }}',
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
-        {data: 'serial_number'},
-        {data: 'brand'},
-        {data: 'vendor'},
-        {data: 'price'},
-        {data: 'hm_target'},
-        {data: 'cph_target'},
-        {data: 'hm_real'},
-        {data: 'cph_real'},
-        {data: 'action', orderable: false, searchable: false},
+        {data: 'tyre_sn'},
+        {data: 'date'},
+        {data: 'unit_no'},
+        {data: 'tx_type'},
+        {data: 'position'},
+        {data: 'hm'},
+        {data: 'rtd'},
+        {data: 'removal_reason'},
+        {data: 'remark'},
       ],
       fixedHeader: true,
       columnDefs: [
               {
-                "targets": [4, 5, 6, 7, 8],
+                "targets": [6],
                 "className": "text-right"
+              },
+              {
+                "targets": [7],
+                "className": "text-center"
               },
         ]
     })

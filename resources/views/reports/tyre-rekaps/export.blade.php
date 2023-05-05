@@ -11,6 +11,8 @@
             <th>do_no</th>
             <th>do_date</th>
             <th>otd</th>
+            <th>last_rtd1</th>
+            <th>last_rtd2</th>
             <th>pressure</th>
             <th>vendor</th>
             <th>receive_date</th>
@@ -36,6 +38,8 @@
                 <td>{{ $tyre->do_no }}</td>
                 <td>{{ $tyre->do_date ? date('d-M-Y', strtotime($tyre->do_date)) : 'n/a' }}</td>
                 <td>{{ $tyre->otd }}</td>
+                <td>{{ $tyre->getLastTransaction() ? $tyre->getLastTransaction()->rtd1 : "n/a" }}</td>
+                <td>{{ $tyre->getLastTransaction() ? $tyre->getLastTransaction()->rtd2 : "n/a" }}</td>
                 <td>{{ $tyre->pressure }}</td>
                 <td>{{ $tyre->supplier->name }}</td>
                 <td>{{ $tyre->receive_date ? date('d-M-Y', strtotime($tyre->receive_date)) : 'n/a' }}</td>

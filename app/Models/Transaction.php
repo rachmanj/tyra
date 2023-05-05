@@ -22,4 +22,9 @@ class Transaction extends Model
             'description' => 'N/A'
         ]);
     }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id');
+    }    
 }

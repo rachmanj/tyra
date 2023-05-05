@@ -9,6 +9,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RemovalReasonController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\ReportTransactionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TransactionController;
@@ -118,6 +119,13 @@ Route::middleware('auth')->group(function () {
             Route::get('/data', [ReportController::class, 'tyre_rekaps_data'])->name('data');
             Route::get('/{id}', [ReportController::class, 'tyre_rekaps_show'])->name('show');
             Route::get('/{id}/data', [ReportController::class, 'tyre_rekaps_history_data'])->name('histories.data');
+        });
+
+        // TRASACTION REKAPS
+        Route::prefix('transactions')->name('transactions.')->group(function () {
+            Route::get('/export', [ReportTransactionController::class, 'export'])->name('export');
+            Route::get('/', [ReportTransactionController::class, 'index'])->name('index');
+            Route::get('/data', [ReportTransactionController::class, 'data'])->name('data');
         });
     });
 });
