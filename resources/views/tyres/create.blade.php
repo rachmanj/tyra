@@ -88,7 +88,7 @@ tyres
                     </div>
 
                     <div class="row">
-                        <div class="col-2">
+                        <div class="col-3">
                             <div class="form-group">
                                 <label for="po_no">PO No</label>
                                 <input type="text" name="po_no" id="po_no" value="{{ old('po_no') }}" class="form-control @error('po_no') is-invalid @enderror">
@@ -99,7 +99,7 @@ tyres
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-2">
+                        <div class="col-3">
                             <div class="form-group">
                                 <label for="do_no">DO No</label>
                                 <input type="text" name="do_no" id="do_no" value="{{ old('do_no') }}" class="form-control @error('do_no') is-invalid @enderror">
@@ -110,7 +110,7 @@ tyres
                                 @enderror
                             </div>
                         </div>
-                        <div class="col-2">
+                        {{-- <div class="col-2">
                             <div class="form-group">
                                 <label for="do_date">DO Date</label>
                                 <input type="date" name="do_date" id="do_date" value="{{ old('do_date') }}" class="form-control @error('do_date') is-invalid @enderror">
@@ -120,7 +120,7 @@ tyres
                                 </div>
                                 @enderror
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="col-2">
                             <div class="form-group">
                                 <label for="otd">OTD</label>

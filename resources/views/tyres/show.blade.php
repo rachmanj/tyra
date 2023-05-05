@@ -110,7 +110,6 @@
     let equipments = data.data
     //  get value of project_equipment from controller 
     let project_equipment = "{{ $project_equipment }}"
-    console.log(project_equipment)
     
     let filtered_equipments = []
     if (project_equipment == 'all') {
