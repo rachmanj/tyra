@@ -119,6 +119,20 @@ class TyreController extends Controller
         return redirect()->route('tyres.index')->with('success', 'Tyre deleted successfully.');
     }
 
+    public function activate($id)
+    {
+        $tyre = Tyre::find($id);
+        
+        if ($tyre->is_active == 1) {
+            $tyre->is_active = 0;
+        } else {
+            $tyre->is_active = 1;
+        }
+        $tyre->save();
+
+        return redirect()->route('tyres.show', $id)->with('success', 'Tyre activation status changed successfully.');
+    }
+
     public function transaction_destroy($transaction_id)
     {
         $transaction = Transaction::find($transaction_id);

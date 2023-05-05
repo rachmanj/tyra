@@ -84,6 +84,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/histories/{transaction_id}', [TyreController::class, 'transaction_destroy'])->name('transaction.destroy');
         // test
         Route::get('/{id}/test', [TyreController::class, 'test'])->name('test');
+        Route::get('/activate/{id}', [TyreController::class, 'activate'])->name('activate');
     });
     Route::resource('tyres', TyreController::class);
 

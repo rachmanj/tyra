@@ -32,6 +32,9 @@ return new class extends Migration
             $table->string('current_project')->nullable();
             $table->integer('hours_target')->nullable();
             $table->string('TyreCPH')->nullable(); // migration
+            $table->integer('accumulated_hm')->default(0)->after('hours_target');
+            $table->boolean('is_active')->default(true);
+            $table->boolean('is_new')->default(true);
             $table->date('waranty_exp_date')->nullable(); // waranty expire date
             $table->foreignId('created_by')->nullable();
             $table->timestamps();
