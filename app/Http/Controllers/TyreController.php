@@ -62,7 +62,8 @@ class TyreController extends Controller
         // $equipments = app(ToolController::class)->getEquipments($tyre->current_project);
 
         // check user role
-        $roles = User::find(auth()->user()->id)->getRoleNames()->toArray();
+        // $roles = User::find(auth()->user()->id)->getRoleNames()->toArray();
+        $roles = app(ToolController::class)->getUserRoles();
 
         if (in_array('superadmin', $roles) || in_array('admin', $roles)) {
             $project_equipment = 'all';
@@ -74,7 +75,6 @@ class TyreController extends Controller
         $last_transaction = app(ToolController::class)->getLastTransaction($tyre->id);
         $current_hm = app(ToolController::class)->getHMTyre($id);
 
-        // return view('tyres.show', compact('tyre', 'equipments', 'removal_reasons', 'last_transaction', 'current_hm'));
         return view('tyres.show', compact('tyre', 'removal_reasons', 'last_transaction', 'current_hm', 'project_equipment'));
     }
 

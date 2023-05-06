@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ToolController extends Controller
@@ -71,5 +72,11 @@ class ToolController extends Controller
         } else {
             return null;
         }
+    }
+
+    public function getUserRoles()
+    {
+        $roles = User::find(auth()->user()->id)->getRoleNames()->toArray();
+        return $roles;
     }
 }

@@ -133,7 +133,15 @@ class UserController extends Controller
 
     public function data()
     {
-        $users = User::all();
+        // check user roles
+        $roles = app(ToolController::class)->getUserRoles();
+
+        // if user is superadmin show all users else show without superadmin
+        if (in_array('superadmin', $roles)) {
+            $users = User::orderBy('username', 'asc')->get();
+        } else {
+            $users = User::where('username', '!=', 'superadmin')->orderBy('name', 'asc')->get();
+        }
 
         return datatables()->of($users)
             ->addIndexColumn()

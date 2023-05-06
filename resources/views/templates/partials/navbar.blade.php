@@ -18,7 +18,10 @@
         </li>
 
         @include('templates.partials.menu.tyres')
-        @include('templates.partials.menu.masterdata')
+
+        @can('access_masterdata')
+          @include('templates.partials.menu.masterdata')
+        @endcan
 
         <li class="nav-item">
           <a href="{{ route('reports.index') }}" class="nav-link">Reports</a>
