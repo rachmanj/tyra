@@ -23,7 +23,7 @@ tyres
                 <div class="card-body">
 
                     <div class="row">
-                        <div class="col-12">
+                        <div class="col-8">
                             <div class="form-group">
                                 <label for="reg_no">Serial Number</label>
                                 <input type="text" name="serial_number" id="serial_number" value="{{ old('serial_number') }}" class="form-control @error('serial_number') is-invalid @enderror">
@@ -33,6 +33,16 @@ tyres
                                 </div>
                                 @enderror
                             </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-group">
+                                <label for="is_new">Tyre Status</label><br>
+                                <input type="radio" value="1" name="is_new" checked>
+                                <label for="is_new">New</label>
+                                <input type="radio" value="0" name="is_new">
+                                <label for="is_new">Used</label>
+                            </div>
+
                         </div>
                     </div>
 

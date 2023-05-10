@@ -4,6 +4,7 @@
             <th>#</th>
             <th>Data ID</th>
             <th>serial_number</th>
+            <th>is_new</th>
             <th>brand</th>
             <th>size</th>
             <th>pattern</th>
@@ -31,6 +32,7 @@
                 <td>{{ $key+1 }}</td>
                 <td>{{ $tyre->id }}</td>
                 <td>{{ $tyre->serial_number }}</td>
+                <td>{{ $tyre->is_new && $tyre->is_new == 1 ? 'new' : 'used' }}</td>
                 <td>{{ $tyre->brand->name }}</td>
                 <td>{{ $tyre->size->description }}</td>
                 <td>{{ $tyre->pattern->name }}</td>

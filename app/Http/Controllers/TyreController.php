@@ -33,9 +33,9 @@ class TyreController extends Controller
 
     public function store(Request $request)
     {
-
         $request->validate([
             'serial_number' => 'required|unique:tyres,serial_number',
+            'is_new' => 'required',
             'po_no' => 'required',
             'size_id' => 'required',
             'brand_id' => 'required',
@@ -95,6 +95,7 @@ class TyreController extends Controller
 
         $request->validate([
             'serial_number' => 'required|unique:tyres,serial_number,' . $tyre->id,
+            'is_new' => 'required',
             'po_no' => 'required',
             'size_id' => 'required',
             'brand_id' => 'required',
@@ -122,7 +123,7 @@ class TyreController extends Controller
     public function activate($id)
     {
         $tyre = Tyre::find($id);
-        
+
         if ($tyre->is_active == 1) {
             $tyre->is_active = 0;
         } else {
@@ -147,6 +148,10 @@ class TyreController extends Controller
         $tyres = Tyre::orderBy('created_at', 'desc')->get();
 
         return datatables()->of($tyres)
+            ->editColumn('serial_number', function ($tyre) {
+                $is_new = $tyre->is_new == 1 ? '<span class="badge badge-success">New</span>' : '<span class="badge badge-warning">Used</span>';
+                return $tyre->serial_number . ' ' . $is_new;
+            })
             ->addColumn('size', function ($tyre) {
                 return $tyre->size->description;
             })
@@ -174,7 +179,7 @@ class TyreController extends Controller
             })
             ->addIndexColumn()
             ->addColumn('action', 'tyres.action')
-            ->rawColumns(['action'])
+            ->rawColumns(['action', 'serial_number'])
             ->toJson();
     }
 

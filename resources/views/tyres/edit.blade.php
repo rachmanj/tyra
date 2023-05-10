@@ -14,7 +14,7 @@
 
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">New Tyre</h3>
+                    <h3 class="card-title">Edit Tyre</h3>
                     <a href="{{ route('tyres.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-arrow-left"></i> Back</a>
                 </div>
 
@@ -23,7 +23,7 @@
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-8">
                                 <div class="form-group">
                                     <label for="reg_no">Serial Number</label>
                                     <input type="text" name="serial_number" id="serial_number" value="{{ old('serial_number', $tyre->serial_number) }}" class="form-control @error('serial_number') is-invalid @enderror">
@@ -32,6 +32,15 @@
                                         {{ $message }}
                                       </div>
                                     @enderror
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <label for="is_new">Tyre Status</label><br>
+                                    <input type="radio" value="1" name="is_new" {{ $tyre->is_new == 1 ? 'checked' : null }}>
+                                    <label for="is_new">New</label>
+                                    <input type="radio" value="0" name="is_new" {{ $tyre->is_new == 0 ? 'checked' : null }}>
+                                    <label for="is_new">Used</label>
                                 </div>
                             </div>
                         </div>
