@@ -15,12 +15,22 @@ class TransactionController extends Controller
 
     public function store(Request $request)
     {
+        $last_transaction = app(ToolController::class)->getLastTransaction($request->tyre_id);
+        $last_transaction_date = $last_transaction ? $last_transaction->date : '1970-01-01';
+
+        $last_tx_of_unit_requested = Transaction::where('tyre_id', $request->tyre_id)
+            ->where('unit_no', $request->unit_no)
+            ->orderBy('id', 'desc')
+            ->first();
+
+        $last_hm_of_unit_requested = $last_tx_of_unit_requested ? $last_tx_of_unit_requested->hm : 0;
+
         $validated = $request->validate([
             'tyre_id' => 'required',
-            'date' => 'required',
+            'date' => 'required|date|after_or_equal:' . $last_transaction_date,
             'unit_no' => 'required',
             'position' => 'required',
-            'hm' => 'required',
+            'hm' => 'required|numeric|min:' . $last_hm_of_unit_requested,
             'rtd1' => 'required',
             'rtd2' => 'required',
         ]);
