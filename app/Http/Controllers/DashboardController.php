@@ -13,6 +13,7 @@ class DashboardController extends Controller
             'active_tyres' => Tyre::where('is_active', 1)->get(),
             'avg_active' => $this->avgActive(),
             'avg_inactive' => $this->avgInActive(),
+            'active_tyre_by_project' => $this->activeTyreByProject(),
         ]);
     }
 
@@ -40,8 +41,13 @@ class DashboardController extends Controller
         return $average_cph;
     }
 
-    public function test()
+    public function activeTyreByProject()
     {
-        return $this->avgInActive();
+        $active_tyres = Tyre::where('is_active', 1)
+            ->selectRaw('count(*) as total, current_project')
+            ->groupBy('current_project')
+            ->get();
+
+        return $active_tyres;
     }
 }
