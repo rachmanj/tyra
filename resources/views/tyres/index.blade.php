@@ -29,6 +29,7 @@
             <th>Price</th>
             <th>Target (hours)</th>
             <th>CPH</th>
+            <th>Status</th>
             <th></th>
           </tr>
           </thead>
@@ -72,6 +73,7 @@
         {data: 'price'},
         {data: 'hours_target'},
         {data: 'cph'},
+        {data: 'is_active'},
         {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,

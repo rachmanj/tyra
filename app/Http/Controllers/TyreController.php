@@ -148,14 +148,16 @@ class TyreController extends Controller
         $roles = app(ToolController::class)->getUserRoles();
 
         if (in_array('superadmin', $roles) || in_array('admin', $roles)) {
-            $tyres = Tyre::orderBy('created_at', 'desc')->get();
+            $tyres = Tyre::orderBy('is_active', 'desc')->orderBy('created_at', 'desc')->get();
         } else {
-            $tyres = Tyre::orderBy('created_at', 'desc')->where('current_project', auth()->user()->project)->get();
+            $tyres = Tyre::orderBy('is_active', 'desc')->orderBy('created_at', 'desc')
+                ->where('current_project', auth()->user()->project)
+                ->get();
         }
 
         return datatables()->of($tyres)
             ->editColumn('serial_number', function ($tyre) {
-                $is_new = $tyre->is_new == 1 ? '<span class="badge badge-success">New</span>' : '<span class="badge badge-warning">Used</span>';
+                $is_new = $tyre->is_new == 1 ? '<span class="badge badge-primary">New</span>' : '<span class="badge badge-warning">Used</span>';
                 return $tyre->serial_number . ' ' . $is_new;
             })
             ->addColumn('size', function ($tyre) {
@@ -183,9 +185,16 @@ class TyreController extends Controller
                     return "n/a";
                 }
             })
+            ->editColumn('is_active', function ($tyre) {
+                if ($tyre->is_active == 1) {
+                    return '<span class="badge badge-success">Active</span>';
+                } else {
+                    return '<span class="badge badge-danger">Inactive</span>';
+                }
+            })
             ->addIndexColumn()
             ->addColumn('action', 'tyres.action')
-            ->rawColumns(['action', 'serial_number'])
+            ->rawColumns(['action', 'serial_number', 'is_active'])
             ->toJson();
     }
 
