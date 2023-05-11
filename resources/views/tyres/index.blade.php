@@ -24,6 +24,7 @@
             <th>#</th>
             <th>SN</th>
             <th>Brand</th>
+            <th>Location</th>
             <th>Vendor</th>
             <th>Price</th>
             <th>Target (hours)</th>
@@ -66,6 +67,7 @@
         {data: 'DT_RowIndex', orderable: false, searchable: false},
         {data: 'serial_number'},
         {data: 'brand'},
+        {data: 'current_project'},
         {data: 'vendor'},
         {data: 'price'},
         {data: 'hours_target'},
@@ -75,7 +77,7 @@
       fixedHeader: true,
       columnDefs: [
               {
-                "targets": [4, 5, 6],
+                "targets": [5, 6, 7],
                 "className": "text-right"
               },
         ]

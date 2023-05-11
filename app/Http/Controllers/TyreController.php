@@ -145,7 +145,13 @@ class TyreController extends Controller
 
     public function data()
     {
-        $tyres = Tyre::orderBy('created_at', 'desc')->get();
+        $roles = app(ToolController::class)->getUserRoles();
+
+        if (in_array('superadmin', $roles) || in_array('admin', $roles)) {
+            $tyres = Tyre::orderBy('created_at', 'desc')->get();
+        } else {
+            $tyres = Tyre::orderBy('created_at', 'desc')->where('current_project', auth()->user()->project)->get();
+        }
 
         return datatables()->of($tyres)
             ->editColumn('serial_number', function ($tyre) {
