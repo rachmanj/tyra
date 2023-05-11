@@ -9,9 +9,11 @@
 @endsection
 
 @section('content')
+    
     <div class="row">
-      <h3>Welcome to the jungle, {{ auth()->user()->name }} ... </h3>
+        @include('dashboard.mini_boxes')
     </div>
+    
 @endsection
 
 @section('scripts')
