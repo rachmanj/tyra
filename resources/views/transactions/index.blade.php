@@ -26,9 +26,11 @@
             <th>Date</th>
             <th>Unit No</th>
             <th>Tx Type</th>
+            <th>Pos</th>
             <th>HM</th>
+            <th>RTD1 | RTD2</th>
             <th>Reason</th>
-            <th></th>
+            <th>Created By</th>
           </tr>
           </thead>
         </table>
@@ -68,15 +70,22 @@
         {data: 'date'},
         {data: 'unit_no'},
         {data: 'tx_type'},
+        {data: 'position'},
         {data: 'hm'},
+        {data: 'rtd'},
         {data: 'removal_reason'},
-        {data: 'action', orderable: false, searchable: false},
+        {data: 'created_by'},
+        // {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,
       columnDefs: [
               {
-                "targets": [5],
+                "targets": [5, 6],
                 "className": "text-right"
+              },
+              {
+                "targets": [5, 7],
+                "className": "text-center"
               },
         ]
     })

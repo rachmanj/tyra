@@ -74,14 +74,24 @@ class TransactionController extends Controller
             ->addColumn('tyre_sn', function ($transaction) {
                 return $transaction->tyre->serial_number;
             })
-            ->editColumn('date', function ($history) {
-                return date('d-M-Y', strtotime($history->date));
+            ->editColumn('date', function ($transaction) {
+                return date('d-M-Y', strtotime($transaction->date));
             })
-            ->editColumn('hm', function ($history) {
-                return number_format($history->hm, 0);
+            ->editColumn('hm', function ($transaction) {
+                return number_format($transaction->hm, 0);
+            })
+            ->addColumn('rtd', function ($transaction) {
+                return number_format($transaction->rtd1, 0) . ' | ' . number_format($transaction->rtd2, 0);
             })
             ->addColumn('removal_reason', function ($transaction) {
                 return $transaction->removalReason->description;
+            })
+            ->editColumn('created_by', function ($transaction) {
+                return $transaction->createdBy->name;
+            })
+            ->editColumn('created_at', function ($transaction) {
+                // diffForHumans() is a Carbon method
+                return $transaction->created_at->diffForHumans();
             })
             ->addIndexColumn()
             ->addColumn('action', 'transactions.action')

@@ -26,7 +26,7 @@
 
         <div class="d-flex flex-row justify-content-end">
             <span class="mr-2">
-                <i class="fas fa-square text-primary"></i> This year
+                <i class="fas fa-square text-primary"></i> Active Tyres
             </span>
 
             <span>
