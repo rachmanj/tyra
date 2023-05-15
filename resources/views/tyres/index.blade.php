@@ -23,6 +23,7 @@
           <tr>
             <th>#</th>
             <th>SN</th>
+            <th>Unit No</th>
             <th>Brand</th>
             <th>Location</th>
             <th>Vendor</th>
@@ -67,6 +68,7 @@
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
         {data: 'serial_number'},
+        {data: 'unit_no'},
         {data: 'brand'},
         {data: 'current_project'},
         {data: 'vendor'},
@@ -79,7 +81,7 @@
       fixedHeader: true,
       columnDefs: [
               {
-                "targets": [5, 6, 7],
+                "targets": [6, 7, 8],
                 "className": "text-right"
               },
         ]

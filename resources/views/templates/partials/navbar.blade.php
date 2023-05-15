@@ -1,7 +1,7 @@
 <!-- Navbar -->
 <nav class="main-header navbar navbar-expand-md navbar-light navbar-dark layout-fixed">
   <div class="container">
-    <a href="#"class="navbar-brand">
+    <a href="{{ route('dashboard.index') }}"class="navbar-brand">
       <img src="{{ asset('adminlte/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
       <span class="brand-text text-white font-weight-light">TYRA</span>
     </a>

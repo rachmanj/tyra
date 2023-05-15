@@ -192,6 +192,14 @@ class TyreController extends Controller
                     return '<span class="badge badge-danger">Inactive</span>';
                 }
             })
+            ->addColumn('unit_no', function ($tyre) {
+                $last_transaction = app(ToolController::class)->getLastTransaction($tyre->id);
+                if ($last_transaction && $last_transaction->tx_type == 'ON') {
+                    return $last_transaction->unit_no;
+                } else {
+                    return "n/a";
+                }
+            })
             ->addIndexColumn()
             ->addColumn('action', 'tyres.action')
             ->rawColumns(['action', 'serial_number', 'is_active'])

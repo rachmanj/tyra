@@ -26,9 +26,9 @@
   <dt class="col-sm-4">Price</dt>
   <dd class="col-sm-8">: IDR {{ number_format($tyre->price, 0, ',', '.') }}</dd>
   <dt class="col-sm-4">Hours | CPH (Target)</dt>
-  <dd class="col-sm-8">: {{ $tyre->hours_target }} | IDR {{ number_format($tyre->price/$tyre->hours_target, 0, ',', '.') }}</dd>
+  <dd class="col-sm-8">: {{ $tyre->hours_target }} | IDR {{ $tyre->price && $tyre->hours_target > 0 ? number_format($tyre->price/$tyre->hours_target, 0, ',', '.') : '-' }}</dd>
   <dt class="col-sm-4">Hours | CPH (Realization)</dt>
-  <dd class="col-sm-8">: {{ $tyre->accumulated_hm }} | IDR {{ $tyre->accumulated_hm > 0 ? number_format($tyre->price/$tyre->accumulated_hm, 0, ',', '.') : '-' }}</dd>
+  <dd class="col-sm-8">: {{ $tyre->accumulated_hm }} | IDR {{ $tyre->price && $tyre->accumulated_hm > 0 ? number_format($tyre->price/$tyre->accumulated_hm, 0, ',', '.') : '-' }}</dd>
   <dt class="col-sm-4">Project</dt>
   <dd class="col-sm-8">: {{ $tyre->current_project }}</dd>
   <dt class="col-sm-4">Warranty Expire Date</dt>
