@@ -56,7 +56,7 @@ tyres
                                     <option value="{{ $size->id }}" {{ $size->id == old('size_id') ? "selected" : "" }}>{{ $size->description }}</option>
                                     @endforeach
                                 </select>
-                                @error('brand_id')
+                                @error('size_id')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
