@@ -84,9 +84,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/data', [TyreController::class, 'data'])->name('data');
         Route::get('/{id}/data', [TyreController::class, 'histories_data'])->name('histories.data');
         Route::delete('/histories/{transaction_id}', [TyreController::class, 'transaction_destroy'])->name('transaction.destroy');
+        Route::get('/activate/{id}', [TyreController::class, 'activate'])->name('activate');
+        Route::put('/reset/{id}', [TyreController::class, 'reset_hm'])->name('reset_hm');
         // test
         Route::get('/{id}/test', [TyreController::class, 'test'])->name('test');
-        Route::get('/activate/{id}', [TyreController::class, 'activate'])->name('activate');
     });
     Route::resource('tyres', TyreController::class);
 

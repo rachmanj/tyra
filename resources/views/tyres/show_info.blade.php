@@ -32,7 +32,9 @@
   <dt class="col-sm-4">Project</dt>
   <dd class="col-sm-8">: {{ $tyre->current_project }}</dd>
   <dt class="col-sm-4">Warranty Expire Date</dt>
-  <dd class="col-sm-8">: {{ date('d-M-Y', strtotime($tyre->waranty_exp_date)) }}</dd>
+  <dd class="col-sm-8">: {{ $tyre->waranty_exp_date ? date('d-M-Y', strtotime($tyre->waranty_exp_date)) : '-' }}</dd>
+  <dt class="col-sm-4">Warranty Expire HM</dt>
+  <dd class="col-sm-8">: {{ $tyre->waranty_exp_hm ? number_format($tyre->waranty_exp_hm, 0, ',', '.') : '-' }}</dd>
   <dt class="col-sm-4">Created by</dt>
   <dd class="col-sm-8">: {{ $tyre->user->name }}, at {{ $tyre->created_at->addHours(8)->format('d M Y - H:i:s') }} wita</dd>
 </dl>

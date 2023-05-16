@@ -42,16 +42,29 @@
                 <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tyre_remove" disabled>Remove Tyre</button>
                 @endif
 
-              {{-- IN ACTIVE BUTTON --}}
+              {{-- IN-ACTIVATE BUTTON --}}
               
                 {{-- if tyre has no transactions or if the transaction type is OFF --}}
-                @if ($tyre->transactions->count() < 1 || $last_transaction && $last_transaction->tx_type == 'OFF')
-                <a href="{{ route('tyres.activate', $tyre->id)}}"   class="btn btn-sm btn-warning float-right" >In-Activate Tyre</a>
-                @else
-                <a href="{{ route('tyres.activate', $tyre->id)}}"   class="btn btn-sm btn-warning float-right" disabled>In-Activate Tyre</a>
-                @endif
+                @can('tyre_activation')
+                  @if ($tyre->transactions->count() < 1 || $last_transaction && $last_transaction->tx_type == 'OFF')
+                  <a href="{{ route('tyres.activate', $tyre->id)}}"   class="btn btn-sm btn-warning float-right" >In-Activate Tyre</a>
+                  @else
+                  <a href="{{ route('tyres.activate', $tyre->id)}}"   class="btn btn-sm btn-warning float-right" disabled>In-Activate Tyre</a>
+                  @endif
+                @endcan
               @else ($tyre->is_active == 0)
-                <a href="{{ route('tyres.activate', $tyre->id)}}"   class="btn btn-sm btn-warning float-right">Activate Tyre</a>
+                @can('tyre_activation')
+                  <a href="{{ route('tyres.activate', $tyre->id)}}"   class="btn btn-sm btn-warning float-right">Activate Tyre</a>
+                @endcan
+              @endif
+              {{-- RESET HM BUTTON --}}
+              @if ($tyre->accumulated_hm !== 0)
+                @can('reset_hm')
+                  <form action="{{ route('tyres.reset_hm', $tyre->id) }}" method="POST">
+                    @csrf @method('PUT')
+                    <button type="submit" class="btn btn-sm btn-danger float-right mt-2" onclick="return confirm('Are you sure you want to reset HM?')">RESET HM</button>
+                  </form>
+                @endcan
               @endif
             </div>
 

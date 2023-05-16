@@ -120,6 +120,17 @@ tyres
                                 @enderror
                             </div>
                         </div>
+                        {{-- <div class="col-2">
+                            <div class="form-group">
+                                <label for="do_date">DO Date</label>
+                                <input type="date" name="do_date" id="do_date" value="{{ old('do_date') }}" class="form-control @error('do_date') is-invalid @enderror">
+                                @error('do_date')
+                                <div class="invalid-feedback">
+                                    {{ $message }}
+                                </div>
+                                @enderror
+                            </div>
+                        </div> --}}
                         <div class="col-2">
                             <div class="form-group">
                                 <label for="otd">OTD</label>
@@ -202,9 +213,9 @@ tyres
                                 <label for="current_project">Project</label>
                                 <select id="current_project" name="current_project" class="form-control select2bs4 @error('current_project') is-invalid @enderror">
                                     <option value="">-- select current project --</option>
-                                    @foreach ($projects as $project)
+                                    {{-- @foreach ($projects as $project)
                                     <option value="{{ $project['project_code'] }}" {{ $project['project_code'] === old('current_project') ? "selected" : "" }}>{{ $project['project_code'] }}</option>
-                                    @endforeach
+                                    @endforeach --}}
                                 </select>
                                 @error('current_project')
                                 <div class="invalid-feedback">
@@ -215,9 +226,9 @@ tyres
                         </div>
                         <div class="col-3">
                             <div class="form-group">
-                                <label for="warranty_exp_date">Warranty Expire Date</label>
-                                <input type="date" name="warranty_exp_date" id="warranty_exp_date" value="{{ old('warranty_exp_date') }}" class="form-control @error('warranty_exp_date') is-invalid @enderror">
-                                @error('warranty_exp_date')
+                                <label for="waranty_exp_date">Waranty Expire Date</label>
+                                <input type="date" name="waranty_exp_date" id="waranty_exp_date" value="{{ old('waranty_exp_date') }}" class="form-control @error('waranty_exp_date') is-invalid @enderror">
+                                @error('waranty_exp_date')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
@@ -226,9 +237,9 @@ tyres
                         </div>
                         <div class="col-3">
                             <div class="form-group">
-                                <label for="warranty_exp_hm">Warranty Expire HM</label>
-                                <input type="text" name="warranty_exp_hm" id="warranty_exp_hm" value="{{ old('warranty_exp_hm') }}" class="form-control @error('warranty_exp_hm') is-invalid @enderror">
-                                @error('warranty_exp_hm')
+                                <label for="waranty_exp_hm">Waranty Expire HM</label>
+                                <input type="text" name="waranty_exp_hm" id="waranty_exp_hm" value="{{ old('waranty_exp_hm') }}" class="form-control @error('waranty_exp_hm') is-invalid @enderror">
+                                @error('waranty_exp_hm')
                                 <div class="invalid-feedback">
                                     {{ $message }}
                                 </div>
@@ -283,5 +294,32 @@ tyres
         var cph = price / hours_target;
         $('#cph').val(cph.toFixed(2));
     });
+
+    // get projects list from api
+    let url = "{{ env('URL_ARKFLEET')}}/projects";
+
+    axios.get(url)
+        .then(function(response) {
+            let projects = response.data.data;
+            let select = document.getElementById('current_project');
+
+            for (let i = 0; i < projects.length; i++) {
+                let project = projects[i];
+                let option = document.createElement('option');
+                option.value = project.project_code;
+                option.text = project.project_code;
+                select.add(option);
+            }
+
+            // set selected project
+            let current_project = "{{ old('current_project') }}";
+
+            if (current_project) {
+                $('#current_project').val(current_project).trigger('change');
+            }
+        })
+        .catch(function(error) {
+            console.log(error);
+        });
 </script>
 @endsection

@@ -25,10 +25,21 @@ class TyreController extends Controller
         $brands = TyreBrand::orderBy('name', 'asc')->get();
         $patterns = Pattern::orderBy('name', 'asc')->get();
         $suppliers = Supplier::orderBy('name', 'asc')->get();
-        // $projects = app(ToolController::class)->getProjects();
 
-        // return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers', 'projects'));
-        return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers'));
+        // get roles of user
+        $roles = app(ToolController::class)->getUserRoles();
+
+        if (in_array('superadmin', $roles) || in_array('admin', $roles)) {
+            $projects = app(ToolController::class)->getProjects();
+        } else {
+            $projects = app(ToolController::class)->getProjects();
+            $projects = array_filter($projects, function ($item) {
+                return $item['project_code'] == auth()->user()->project;
+            });
+        }
+
+        return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers', 'projects'));
+        // return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers'));
     }
 
     public function store(Request $request)
@@ -49,6 +60,8 @@ class TyreController extends Controller
         ]);
 
         Tyre::create(array_merge($request->all(), [
+            'warranty_exp_date' => $request->warranty_exp_date ?? null,
+            'warranty_exp_hm' => $request->warranty_exp_hm ?? null,
             'created_by' => auth()->user()->id
         ]));
 
@@ -86,14 +99,26 @@ class TyreController extends Controller
         $patterns = Pattern::orderBy('name', 'asc')->get();
         $suppliers = Supplier::orderBy('name', 'asc')->get();
 
-        return view('tyres.edit', compact('tyre', 'sizes', 'brands', 'patterns', 'suppliers'));
+        // get roles of user
+        $roles = app(ToolController::class)->getUserRoles();
+
+        if (in_array('superadmin', $roles) || in_array('admin', $roles)) {
+            $projects = app(ToolController::class)->getProjects();
+        } else {
+            $projects = app(ToolController::class)->getProjects();
+            $projects = array_filter($projects, function ($item) {
+                return $item['project_code'] == auth()->user()->project;
+            });
+        }
+
+        return view('tyres.edit', compact('tyre', 'sizes', 'brands', 'patterns', 'suppliers', 'projects'));
     }
 
     public function update(Request $request, $id)
     {
         $tyre = Tyre::find($id);
 
-        $request->validate([
+        $validated = $request->validate([
             'serial_number' => 'required|unique:tyres,serial_number,' . $tyre->id,
             'is_new' => 'required',
             'po_no' => 'required',
@@ -108,7 +133,10 @@ class TyreController extends Controller
             'pressure' => 'required|numeric',
         ]);
 
-        $tyre->update($request->all());
+        $tyre->update(array_merge($validated, [
+            'warranty_exp_date' => $request->warranty_exp_date ?? null,
+            'warranty_exp_hm' => $request->warranty_exp_hm ?? null,
+        ]));
 
         return redirect()->route('tyres.index')->with('success', 'Tyre updated successfully.');
     }
@@ -137,10 +165,37 @@ class TyreController extends Controller
     public function transaction_destroy($transaction_id)
     {
         $transaction = Transaction::find($transaction_id);
-        $tyre_id = $transaction->tyre_id;
+        $tyre = Tyre::find($transaction->tyre_id);
+
+        if ($transaction->tx_type == 'OFF') {
+            // find last transaction before $transaction
+            $last_transaction = Transaction::where('tyre_id', $tyre->id)
+                ->where('id', '<', $transaction->id)
+                ->orderBy('id', 'desc')
+                ->first();
+
+            $variant_hm = $transaction->hm - $last_transaction->hm;
+
+            // update tyre current hm
+            $updated_tyre_hm = $tyre->accumulated_hm - $variant_hm;
+            $tyre->update(['accumulated_hm' => $updated_tyre_hm]);
+        }
+
         $transaction->delete();
 
-        return redirect()->route('tyres.show', $tyre_id)->with('success', 'Transaction deleted successfully.');
+        return redirect()->route('tyres.show', $tyre->id)->with('success', 'Transaction deleted successfully.');
+    }
+
+    public function reset_hm($id)
+    {
+        $tyre = Tyre::find($id);
+        $last_accumulated_hm = $tyre->accumulated_hm;
+        $tyre->update([
+            'last_hm_before_reset' => $last_accumulated_hm,
+            'accumulated_hm' => 0,
+        ]);
+
+        return redirect()->route('tyres.show', $tyre->id)->with('success', 'Tyre HM reset successfully.');
     }
 
     public function data()

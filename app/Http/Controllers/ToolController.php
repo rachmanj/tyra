@@ -10,7 +10,7 @@ class ToolController extends Controller
 {
     public function getProjects()
     {
-        $url = env('URL_PROJECTS');
+        $url = env('URL_ARKFLEET') . '/projects';
         $client = new \GuzzleHttp\Client();
         $response = $client->request('GET', $url);
         $projects = json_decode($response->getBody()->getContents(), true)['data'];

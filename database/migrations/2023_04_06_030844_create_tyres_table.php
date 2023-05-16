@@ -35,7 +35,9 @@ return new class extends Migration
             $table->integer('accumulated_hm')->default(0)->after('hours_target');
             $table->boolean('is_active')->default(true);
             $table->boolean('is_new')->default(true);
-            $table->date('waranty_exp_date')->nullable(); // waranty expire date
+            $table->date('warranty_exp_date')->nullable(); // waranty expire date
+            $table->integer('warranty_exp_hm')->nullable();
+            $table->integer('last_hm_before_reset')->nullable();
             $table->foreignId('created_by')->nullable();
             $table->timestamps();
         });
