@@ -20,7 +20,7 @@
   <dt class="col-sm-4">DO</dt>
   <dd class="col-sm-8">: No.{{ $tyre->do_no }}</dd>
   <dt class="col-sm-4">Received Date</dt>
-  <dd class="col-sm-8">: {{ date('d-M-Y', strtotime($tyre->receive_date)) }}</dd>
+  <dd class="col-sm-8">: {{ $tyre->receive_date ? date('d-M-Y', strtotime($tyre->receive_date)) : ' - ' }}</dd>
   <dt class="col-sm-4">Vendor</dt>
   <dd class="col-sm-8">: {{ $tyre->supplier->name }}</dd>
   <dt class="col-sm-4">Price</dt>
