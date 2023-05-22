@@ -1,6 +1,6 @@
 <dl class="row">
   <dt class="col-sm-4">Serial No</dt>
-  <dd class="col-sm-8">: <b>{{ $tyre->serial_number }}</b> {{ $tyre->is_new == 1 ? '<span class="badge badge-success">New</span>' : '<span class="badge badge-danger">Used</span>' }}</dd>
+  <dd class="col-sm-8">: <b>{{ $tyre->serial_number }}</b> @if ($tyre->is_new) <span class="badge badge-success">New</span> @else  <span class="badge badge-danger">Used</span> @endif</dd>
   <dt class="col-sm-4">Size | Pattern | Pressure</dt>
   <dd class="col-sm-8">: {{ $tyre->size->description }} | {{ $tyre->pattern->name }} | {{ $tyre->pressure }}</dd>
   <dt class="col-sm-4">Brand</dt>
