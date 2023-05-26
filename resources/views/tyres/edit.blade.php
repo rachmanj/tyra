@@ -23,9 +23,9 @@
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="col-8">
+                            <div class="col-6">
                                 <div class="form-group">
-                                    <label for="reg_no">Serial Number</label>
+                                    <label for="serial_number">Serial Number</label>
                                     <input type="text" name="serial_number" id="serial_number" value="{{ old('serial_number', $tyre->serial_number) }}" class="form-control @error('serial_number') is-invalid @enderror">
                                     @error('serial_number')
                                       <div class="invalid-feedback">
@@ -34,7 +34,18 @@
                                     @enderror
                                 </div>
                             </div>
-                            <div class="col-4">
+                            <div class="col-3">
+                                <div class="form-group">
+                                    <label for="prod_year">Production Year</label>
+                                    <input type="text" name="prod_year" id="prod_year" value="{{ old('prod_year', $tyre->prod_year) }}" class="form-control @error('prod_year') is-invalid @enderror">
+                                    @error('prod_year')
+                                      <div class="invalid-feedback">
+                                        {{ $message }}
+                                      </div>
+                                    @enderror
+                                </div>
+                            </div>
+                            <div class="col-3">
                                 <div class="form-group">
                                     <label for="is_new">Tyre Status</label><br>
                                     <input type="radio" value="1" name="is_new" {{ $tyre->is_new == 1 ? 'checked' : null }}>

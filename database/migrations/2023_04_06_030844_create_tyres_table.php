@@ -30,6 +30,7 @@ return new class extends Migration
             $table->integer('price')->nullable();
             $table->date('receive_date')->nullable();
             $table->string('current_project')->nullable();
+            $table->integer('prod_year')->nullable();
             $table->integer('hours_target')->nullable();
             $table->string('TyreCPH')->nullable(); // migration
             $table->integer('accumulated_hm')->default(0)->after('hours_target');

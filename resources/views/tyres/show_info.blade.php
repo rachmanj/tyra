@@ -3,8 +3,8 @@
   <dd class="col-sm-8">: <b>{{ $tyre->serial_number }}</b> @if ($tyre->is_new) <span class="badge badge-success">New</span> @else  <span class="badge badge-danger">Used</span> @endif</dd>
   <dt class="col-sm-4">Size | Pattern | Pressure</dt>
   <dd class="col-sm-8">: {{ $tyre->size->description }} | {{ $tyre->pattern->name }} | {{ $tyre->pressure }}</dd>
-  <dt class="col-sm-4">Brand</dt>
-  <dd class="col-sm-8">: {{ $tyre->brand->name }}</dd>
+  <dt class="col-sm-4">Brand | Production Year</dt>
+  <dd class="col-sm-8">: {{ $tyre->brand->name }} | {{ $tyre->prod_year ? $tyre->prod_year : ' - ' }}</dd>
   <dt class="col-sm-4">PO No</dt>
   <dd class="col-sm-8">: {{ $tyre->po_no }}</dd>
   <dt class="col-sm-4">DO</dt>

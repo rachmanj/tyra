@@ -46,6 +46,7 @@ class TyreController extends Controller
     {
         $request->validate([
             'serial_number' => 'required|unique:tyres,serial_number',
+            'prod_year' => 'required',
             'is_new' => 'required',
             'po_no' => 'required',
             'size_id' => 'required',
@@ -120,6 +121,7 @@ class TyreController extends Controller
 
         $validated = $request->validate([
             'serial_number' => 'required|unique:tyres,serial_number,' . $tyre->id,
+            'prod_year' => 'required',
             'is_new' => 'required',
             'po_no' => 'required',
             'size_id' => 'required',

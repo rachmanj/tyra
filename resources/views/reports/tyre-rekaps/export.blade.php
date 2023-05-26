@@ -6,6 +6,7 @@
             <th>serial_number</th>
             <th>is_new</th>
             <th>brand</th>
+            <th>production_year</th>
             <th>size</th>
             <th>pattern</th>
             <th>po_no</th>
@@ -34,6 +35,7 @@
                 <td>{{ $tyre->serial_number }}</td>
                 <td>{{ $tyre->is_new && $tyre->is_new == 1 ? 'new' : 'used' }}</td>
                 <td>{{ $tyre->brand->name }}</td>
+                <td>{{ $tyre->prod_year }}</td>
                 <td>{{ $tyre->size->description }}</td>
                 <td>{{ $tyre->pattern->name }}</td>
                 <td>{{ $tyre->po_no }}</td>
