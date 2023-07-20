@@ -41,6 +41,8 @@ Route::middleware('auth')->group(function () {
         Route::put('activate/{id}', [UserController::class, 'activate'])->name('activate');
         Route::put('deactivate/{id}', [UserController::class, 'deactivate'])->name('deactivate');
         Route::put('roles-update/{id}', [UserController::class, 'roles_user_update'])->name('roles_user_update');
+        Route::get('change-password/{id}', [UserController::class, 'change_password'])->name('change_password');
+        Route::put('password-update/{id}', [UserController::class, 'password_update'])->name('password_update');
     });
 
     Route::resource('users', UserController::class);

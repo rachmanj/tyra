@@ -41,10 +41,13 @@
         <a id="dropdownPayreq" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">{{ auth()->user()->name }} ({{ auth()->user()->project }})</a>
         <ul aria-labelledby="dropdownPayreq" class="dropdown-menu border-0 shadow">
           <li>
+            <a href="{{ route('users.change_password', auth()->user()->id) }}" class="dropdown-item">Change Password</a>
+          </li>
+          <li>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
               @csrf
             </form>
-            <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a>
+            <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><b>LOGOUT</b></a>
           </li>
         </ul>
     </li>
