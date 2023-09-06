@@ -28,8 +28,8 @@
             <th>Location</th>
             <th>Vendor</th>
             <th>Price</th>
-            <th>Target (hours)</th>
-            <th>CPH</th>
+            <th>Target_H <br> Warranty_D <br> Warranty_H</th>
+            <th>Target CPH</th>
             <th>Status</th>
             <th></th>
           </tr>

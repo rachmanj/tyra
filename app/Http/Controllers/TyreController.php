@@ -233,7 +233,9 @@ class TyreController extends Controller
                 return number_format($tyre->price, 0);
             })
             ->editColumn('hours_target', function ($tyre) {
-                return number_format($tyre->hours_target, 0);
+                $wed = $tyre->warranty_exp_date ? date('d-M-Y', strtotime($tyre->warranty_exp_date)) : "n/a";
+                $weh = $tyre->warranty_exp_hm ? number_format($tyre->warranty_exp_hm, 0) : "n/a";
+                return number_format($tyre->hours_target, 0) . ' <br> ' . $wed . ' <br> ' . $weh;
             })
             ->addColumn('cph', function ($tyre) {
                 if ($tyre->price && $tyre->hours_target) {
@@ -259,7 +261,7 @@ class TyreController extends Controller
             })
             ->addIndexColumn()
             ->addColumn('action', 'tyres.action')
-            ->rawColumns(['action', 'serial_number', 'is_active'])
+            ->rawColumns(['action', 'serial_number', 'is_active', 'hours_target'])
             ->toJson();
     }
 
