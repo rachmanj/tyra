@@ -63,10 +63,10 @@ class ToolController extends Controller
         $last_transaction = $this->getLastTransaction($tyre_id);
 
         if ($first_transaction && $last_transaction) {
-            $first_transaction_date = $first_transaction->hm;
-            $last_transaction_date = $last_transaction->hm;
+            $first_transaction_hm = $first_transaction->hm;
+            $last_transaction_hm = $last_transaction->hm;
 
-            $diff = $last_transaction_date - $first_transaction_date;
+            $diff = $last_transaction_hm - $first_transaction_hm;
 
             return $diff;
         } else {

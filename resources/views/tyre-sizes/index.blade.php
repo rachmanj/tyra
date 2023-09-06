@@ -23,6 +23,7 @@
           <tr>
             <th>#</th>
             <th>Description</th>
+            <th class="text-right">AVG CPH</th>
             <th></th>
           </tr>
           </thead>
@@ -92,9 +93,16 @@
       columns: [
         {data: 'DT_RowIndex', orderable: false, searchable: false},
         {data: 'description'},
+        {data: 'avg_cph'},
         {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,
+      columnDefs: [
+              {
+                "targets": [2],
+                "className": "text-right"
+              },
+        ]
     })
   });
 </script>

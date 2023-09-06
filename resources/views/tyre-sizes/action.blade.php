@@ -1,10 +1,12 @@
+@hasanyrole('admin|superadmin')
 <button type="button" class="btn btn-xs btn-warning" data-toggle="modal" data-target="#modal-edit-{{ $model->id }}">edit</button>
 
 {{-- destroy button with alert confirmation --}}
 <form action="{{ route('tyre-sizes.destroy', $model->id) }}" method="POST" class="d-inline">
     @csrf @method('DELETE')
-    <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want delete this record?')">delete</button>
+    <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want delete this record?')" {{ $model->tyres->count() > 0 ? 'disabled' : '' }}>delete</button>
 </form>
+@endhasanyrole
 
 {{-- Modal edit --}}
 <div class="modal fade" id="modal-edit-{{ $model->id }}">

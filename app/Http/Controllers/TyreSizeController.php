@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tyre;
 use App\Models\TyreSize;
 use Illuminate\Http\Request;
 
@@ -48,9 +49,24 @@ class TyreSizeController extends Controller
         $tyre_sizes = TyreSize::orderBy('description', 'asc')->get();
 
         return datatables()->of($tyre_sizes)
+            ->addColumn('avg_cph', function ($tyre_size) {
+                return $this->avgCph($tyre_size);
+            })
             ->addIndexColumn()
             ->addColumn('action', 'tyre-sizes.action')
             ->rawColumns(['action'])
             ->toJson();
+    }
+
+    public function avgCph($tyre_size)
+    {
+        $tyres = Tyre::where('size_id', $tyre_size->id)->get();
+
+        $total_hm = $tyres->sum('accumulated_hm');
+        $total_price = $tyres->sum('price');
+
+        $average_cph = $total_hm && $total_price ? number_format($total_price / $total_hm, 2) : null;
+
+        return $average_cph;
     }
 }

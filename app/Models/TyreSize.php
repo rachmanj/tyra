@@ -12,4 +12,9 @@ class TyreSize extends Model
     protected $fillable = [
         'description',
     ];
+
+    public function tyres()
+    {
+        return $this->hasMany(Tyre::class, 'size_id', 'id');
+    }
 }
