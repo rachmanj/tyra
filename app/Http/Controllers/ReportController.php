@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\Tyre;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 
 class ReportController extends Controller
 {
@@ -34,7 +35,7 @@ class ReportController extends Controller
 
     public function tyre_rekaps_data()
     {
-        $tyres = Tyre::orderBy('created_at', 'desc')->get();
+        $tyres = Tyre::with(['lastTransaction'])->get();
 
         return datatables()->of($tyres)
             ->addColumn('size', function ($tyre) {
@@ -56,26 +57,19 @@ class ReportController extends Controller
                 return number_format($tyre->hours_target, 0);
             })
             ->addColumn('cph_target', function ($tyre) {
-                if ($tyre->price && $tyre->hours_target) {
-                    return number_format($tyre->price / $tyre->hours_target, 0);
-                } else {
-                    return "n/a";
-                }
+                return $tyre->price && $tyre->hours_target ? number_format($tyre->price / $tyre->hours_target, 0) : "n/a";
             })
             ->editColumn('hm_real', function ($tyre) {
                 return $tyre->accumulated_hm ? number_format($tyre->accumulated_hm, 0) : "n/a";
             })
             ->addColumn('cph_real', function ($tyre) {
-                if ($tyre->price && $tyre->accumulated_hm) {
-                    return number_format($tyre->price / $tyre->accumulated_hm, 0);
-                } else {
-                    return "n/a";
-                }
+                return $tyre->price && $tyre->accumulated_hm ? number_format($tyre->price / $tyre->accumulated_hm, 0) : "n/a";
             })
             ->addColumn('rtd', function ($tyre) {
-                $rtd1 = $tyre->getLastTransaction() ? $tyre->getLastTransaction()->rtd1 : "n/a";
-                $rtd2 = $tyre->getLastTransaction() ? $tyre->getLastTransaction()->rtd2 : "n/a";
-                return $rtd1 . " | " . $rtd2;
+                $lastTransaction = $tyre->lastTransaction;
+                $rtd1 = $lastTransaction ? $lastTransaction->rtd1 : "n/a";
+                $rtd2 = $lastTransaction ? $lastTransaction->rtd2 : "n/a";
+                return "$rtd1 | $rtd2";
             })
             ->addIndexColumn()
             ->addColumn('action', 'reports.tyre-rekaps.action')
@@ -89,12 +83,12 @@ class ReportController extends Controller
 
         return datatables()->of($histories)
             ->editColumn('date', function ($history) {
-                return date('d-M-Y', strtotime($history->date));
+                return Carbon::parse($history->date)->format('d-M-Y');
             })
             ->editColumn('rtd1', function ($history) {
-                $rtd1 = $history->rtd1 ? $history->rtd1 : "n/a";
-                $rtd2 = $history->rtd2 ? $history->rtd2 : "n/a";
-                return $rtd1 . " | " . $rtd2;
+                $rtd1 = $history->rtd1 ?? "n/a";
+                $rtd2 = $history->rtd2 ?? "n/a";
+                return "$rtd1 | $rtd2";
             })
             ->addColumn('removal_reason', function ($history) {
                 return $history->removal_reason_id ? $history->removalReason->description : "n/a";
@@ -102,5 +96,4 @@ class ReportController extends Controller
             ->addIndexColumn()
             ->toJson();
     }
-
 }

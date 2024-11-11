@@ -59,4 +59,9 @@ class Tyre extends Model
             return null;
         }
     }
+
+    public function lastTransaction()
+    {
+        return $this->hasOne(Transaction::class)->latestOfMany();
+    }
 }
