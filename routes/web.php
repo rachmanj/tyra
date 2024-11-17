@@ -12,6 +12,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\ReportTransactionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\TyreSizeController;
 use App\Http\Controllers\TyreBrandController;
@@ -132,4 +133,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/data', [ReportTransactionController::class, 'data'])->name('data');
         });
     });
+
+    // TEST
+    Route::get('/test', [TestController::class, 'index'])->name('index');
 });

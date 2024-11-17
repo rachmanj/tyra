@@ -11,9 +11,17 @@ use App\Models\TyreBrand;
 use App\Models\TyreSize;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class TyreController extends Controller
 {
+    protected $toolController;
+
+    public function __construct(ToolController $toolController)
+    {
+        $this->toolController = $toolController;
+    }
+
     public function index()
     {
         return view('tyres.index');
@@ -73,13 +81,9 @@ class TyreController extends Controller
     {
         $tyre = Tyre::find($id);
 
-        // $equipments = app(ToolController::class)->getEquipments($tyre->current_project);
-
-        // check user role
-        // $roles = User::find(auth()->user()->id)->getRoleNames()->toArray();
         $roles = app(ToolController::class)->getUserRoles();
 
-        if (in_array('superadmin', $roles) || in_array('admin', $roles)) {
+        if (array_intersect(['superadmin', 'admin'], $roles)) {
             $project_equipment = 'all';
         } else {
             $project_equipment = auth()->user()->project;
@@ -197,20 +201,20 @@ class TyreController extends Controller
             'accumulated_hm' => 0,
         ]);
 
-        return redirect()->route('tyres.show', $tyre->id)->with('success', 'Tyre HM reset successfully.');
+        return redirect()->route('tyres.show', $id)->with('success', 'Tyre HM reset successfully.');
     }
 
     public function data()
     {
-        $roles = app(ToolController::class)->getUserRoles();
+        $roles = $this->toolController->getUserRoles();
 
-        if (in_array('superadmin', $roles) || in_array('admin', $roles)) {
-            $tyres = Tyre::orderBy('is_active', 'desc')->orderBy('created_at', 'desc')->get();
-        } else {
-            $tyres = Tyre::orderBy('is_active', 'desc')->orderBy('created_at', 'desc')
-                ->where('current_project', auth()->user()->project)
-                ->get();
+        $tyresQuery = Tyre::orderBy('is_active', 'desc')->orderBy('created_at', 'desc');
+
+        if (!array_intersect(['superadmin', 'admin'], $roles)) {
+            $tyresQuery->where('current_project', auth()->user()->project);
         }
+
+        $tyres = $tyresQuery->with(['size', 'brand', 'pattern', 'supplier'])->get();
 
         return datatables()->of($tyres)
             ->editColumn('serial_number', function ($tyre) {
@@ -233,31 +237,23 @@ class TyreController extends Controller
                 return number_format($tyre->price, 0);
             })
             ->editColumn('hours_target', function ($tyre) {
-                $wed = $tyre->warranty_exp_date ? date('d-M-Y', strtotime($tyre->warranty_exp_date)) : "n/a";
-                $weh = $tyre->warranty_exp_hm ? number_format($tyre->warranty_exp_hm, 0) : "n/a";
-                return number_format($tyre->hours_target, 0) . ' <br> ' . $wed . ' <br> ' . $weh;
+                $warrantyExpDate = $tyre->warranty_exp_date ? Carbon::parse($tyre->warranty_exp_date)->format('d-M-Y') : "n/a";
+                $warrantyExpHm = $tyre->warranty_exp_hm ? number_format($tyre->warranty_exp_hm, 0) : "n/a";
+                return sprintf('%s <br> %s <br> %s', number_format($tyre->hours_target, 0), $warrantyExpDate, $warrantyExpHm);
             })
             ->addColumn('cph', function ($tyre) {
-                if ($tyre->price && $tyre->hours_target) {
-                    return number_format($tyre->price / $tyre->hours_target, 0);
-                } else {
-                    return "n/a";
-                }
+                return $tyre->price && $tyre->hours_target ? number_format($tyre->price / $tyre->hours_target, 0) : "n/a";
             })
             ->editColumn('is_active', function ($tyre) {
-                if ($tyre->is_active == 1) {
-                    return '<span class="badge badge-success">Active</span>';
-                } else {
-                    return '<span class="badge badge-danger">Inactive</span>';
-                }
+                return $tyre->is_active == 1
+                    ? '<span class="badge badge-success">Active</span>'
+                    : '<span class="badge badge-danger">Inactive</span>';
             })
             ->addColumn('unit_no', function ($tyre) {
-                $last_transaction = app(ToolController::class)->getLastTransaction($tyre->id);
-                if ($last_transaction && $last_transaction->tx_type == 'ON') {
-                    return $last_transaction->unit_no;
-                } else {
-                    return "n/a";
-                }
+                $last_transaction = $this->toolController->getLastTransaction($tyre->id);
+                return $last_transaction && $last_transaction->tx_type == 'ON'
+                    ? $last_transaction->unit_no
+                    : "n/a";
             })
             ->addIndexColumn()
             ->addColumn('action', 'tyres.action')
@@ -271,12 +267,12 @@ class TyreController extends Controller
 
         return datatables()->of($histories)
             ->editColumn('date', function ($history) {
-                return date('d-M-Y', strtotime($history->date));
+                return Carbon::parse($history->date)->format('d-M-Y');
             })
             ->editColumn('rtd1', function ($history) {
-                $rtd1 = $history->rtd1 ? $history->rtd1 : "n/a";
-                $rtd2 = $history->rtd2 ? $history->rtd2 : "n/a";
-                return $rtd1 . " | " . $rtd2;
+                $rtd1 = $history->rtd1 ?? "n/a";
+                $rtd2 = $history->rtd2 ?? "n/a";
+                return "$rtd1 | $rtd2";
             })
             ->addColumn('removal_reason', function ($history) {
                 return $history->removal_reason_id ? $history->removalReason->description : "n/a";
@@ -289,8 +285,30 @@ class TyreController extends Controller
 
     public function test()
     {
-        $equipments = app(ToolController::class)->getEquipments('APS');
+        $equipments = $this->toolController->getEquipments('APS');
 
         return $equipments;
+    }
+
+    public function tyre_data()
+    {
+        $tyres = Tyre::with(['size', 'brand', 'pattern', 'supplier'])->get();
+
+        return datatables()->of($tyres)
+            ->editColumn('is_active', function ($tyre) {
+                return $tyre->is_active == 1
+                    ? '<span class="badge badge-success">Active</span>'
+                    : '<span class="badge badge-danger">Inactive</span>';
+            })
+            ->addColumn('unit_no', function ($tyre) {
+                $last_transaction = $this->toolController->getLastTransaction($tyre->id);
+                return $last_transaction && $last_transaction->tx_type == 'ON'
+                    ? $last_transaction->unit_no
+                    : "n/a";
+            })
+            ->addIndexColumn()
+            ->addColumn('action', 'tyres.action')
+            ->rawColumns(['action', 'serial_number', 'is_active', 'hours_target'])
+            ->toJson();
     }
 }

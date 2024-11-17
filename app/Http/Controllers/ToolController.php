@@ -5,14 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use GuzzleHttp\Client;
 
 class ToolController extends Controller
 {
+    protected $client;
+
+    public function __construct(Client $client)
+    {
+        $this->client = $client;
+    }
+
     public function getProjects()
     {
         $url = env('URL_ARKFLEET') . '/projects';
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $url);
+        $response = $this->client->get($url);
         $projects = json_decode($response->getBody()->getContents(), true)['data'];
 
         return $projects;
@@ -21,9 +28,7 @@ class ToolController extends Controller
     public function getEquipments($project = null)
     {
         $url = env('URL_EQUIPMENTS');
-
-        $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $url);
+        $response = $this->client->get($url);
         $equipments = json_decode($response->getBody()->getContents(), true)['data'];
 
         if ($project) {
@@ -37,24 +42,12 @@ class ToolController extends Controller
 
     public function getLastTransaction($tyre_id)
     {
-        $last_transaction = Transaction::where('tyre_id', $tyre_id)->orderBy('id', 'desc')->first();
-
-        if ($last_transaction) {
-            return $last_transaction;
-        } else {
-            return null;
-        }
+        return Transaction::where('tyre_id', $tyre_id)->latest()->first();
     }
 
     public function getFirstTransaction($tyre_id)
     {
-        $first_transaction = Transaction::where('tyre_id', $tyre_id)->orderBy('id', 'asc')->first();
-
-        if ($first_transaction) {
-            return $first_transaction;
-        } else {
-            return null;
-        }
+        return Transaction::where('tyre_id', $tyre_id)->oldest()->first();
     }
 
     public function getHMTyre($tyre_id)
@@ -63,20 +56,14 @@ class ToolController extends Controller
         $last_transaction = $this->getLastTransaction($tyre_id);
 
         if ($first_transaction && $last_transaction) {
-            $first_transaction_hm = $first_transaction->hm;
-            $last_transaction_hm = $last_transaction->hm;
-
-            $diff = $last_transaction_hm - $first_transaction_hm;
-
-            return $diff;
-        } else {
-            return null;
+            return $last_transaction->hm - $first_transaction->hm;
         }
+
+        return null;
     }
 
     public function getUserRoles()
     {
-        $roles = User::find(auth()->user()->id)->getRoleNames()->toArray();
-        return $roles;
+        return User::find(auth()->user()->id)->getRoleNames()->toArray();
     }
 }
