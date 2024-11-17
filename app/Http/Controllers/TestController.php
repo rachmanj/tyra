@@ -9,7 +9,7 @@ class TestController extends Controller
 {
     public function index()
     {
-        $test = app(DashboardController::class)->generate_rekap_data();
+        $test = app(DashboardController::class)->generate_rekap_data_by_brand();
 
         return $test;
     }

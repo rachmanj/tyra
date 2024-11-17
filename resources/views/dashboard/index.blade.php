@@ -21,9 +21,15 @@
 
     <div class="row">
         <div class="col-12">
-            @include('dashboard.active_tyre_by_project')
+            @include('dashboard.rekap_by_brand')
         </div>
     </div>
+
+    {{-- <div class="row">
+        <div class="col-12">
+            @include('dashboard.active_tyre_by_project')
+        </div>
+    </div> --}}
 @endsection
 
 @section('scripts')

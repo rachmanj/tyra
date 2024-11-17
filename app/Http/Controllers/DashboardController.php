@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Supplier;
 use App\Models\Tyre;
+use App\Models\TyreBrand;
 
 class DashboardController extends Controller
 {
@@ -15,6 +16,7 @@ class DashboardController extends Controller
             'avg_inactive' => $this->avgInActive(),
             'active_tyre_by_project' => $this->activeTyreByProject(),
             'data' => $this->generate_rekap_data(),
+            'by_brands' => $this->generate_rekap_data_by_brand(),
         ]);
     }
 
@@ -115,5 +117,45 @@ class DashboardController extends Controller
                 'total_inactive_average_cph' => $total_inactive_average_cph,
             ],
         ];
+    }
+
+    public function generate_rekap_data_by_brand()
+    {
+        $brands = TyreBrand::all();
+        $data = [];
+
+        foreach ($brands as $brand) {
+            $tyres = Tyre::where('brand_id', $brand->id)->get();
+
+            $total_hm = $tyres->sum('accumulated_hm');
+            $total_price = $tyres->sum('price');
+            $average_cph = $total_hm && $total_price ? number_format($total_price / $total_hm, 2) : '-';
+
+            $active_tyres = Tyre::where('is_active', 1)
+                ->where('brand_id', $brand->id)
+                ->get();
+            $inactive_tyres = Tyre::where('is_active', 0)
+                ->where('brand_id', $brand->id)
+                ->get();
+
+            $active_total_hm = $active_tyres->sum('accumulated_hm');
+            $active_total_price = $active_tyres->sum('price');
+            $active_average_cph = $active_total_hm && $active_total_price ? number_format($active_total_price / $active_total_hm, 2) : '-';
+
+            $inactive_total_hm = $inactive_tyres->sum('accumulated_hm');
+            $inactive_total_price = $inactive_tyres->sum('price');
+            $inactive_average_cph = $inactive_total_hm && $inactive_total_price ? number_format($inactive_total_price / $inactive_total_hm, 2) : '-';
+
+            $data[] = [
+                'brand' => $brand->name,
+                'active_tyres' => $active_tyres->count(),
+                'inactive_tyres' => $inactive_tyres->count(),
+                'average_cph' => $average_cph,
+                'active_average_cph' => $active_average_cph,
+                'inactive_average_cph' => $inactive_average_cph,
+            ];
+        }
+
+        return $data;
     }
 }

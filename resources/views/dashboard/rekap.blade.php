@@ -1,6 +1,6 @@
 <div class="card card-info">
     <div class="card-header py-1">
-        <h3 class="card-title">Rekap Data</h3>
+        <h3 class="card-title">Rekap Data by Project</h3>
     </div>
     <div class="card-body p-0">
         <table class="table table-sm">
