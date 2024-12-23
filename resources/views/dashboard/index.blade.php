@@ -19,9 +19,15 @@
         </div>
     </div>
 
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-12">
             @include('dashboard.rekap_by_brand')
+        </div>
+    </div> --}}
+
+    <div class="row">
+        <div class="col-12">
+            @include('dashboard.by_brand_by_project')
         </div>
     </div>
 

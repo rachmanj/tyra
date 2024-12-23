@@ -17,6 +17,8 @@ class DashboardController extends Controller
             'active_tyre_by_project' => $this->activeTyreByProject(),
             'data' => $this->generate_rekap_data(),
             'by_brands' => $this->generate_rekap_data_by_brand(),
+            'by_brands_by_project' => $this->generate_rekap_data_by_brand_by_project(),
+            'projects' => ['017C', '021C', '022C', '023C'],
         ]);
     }
 
@@ -156,6 +158,47 @@ class DashboardController extends Controller
             ];
         }
 
+        return $data;
+    }
+
+    public function generate_rekap_data_by_brand_by_project()
+    {
+        $brands = TyreBrand::all();
+        $projects = ['017C', '021C', '022C', '023C'];
+        $data = [];
+
+        $tyres = Tyre::select('brand_id', 'current_project', 'is_active', 'accumulated_hm', 'price')
+            ->whereIn('current_project', $projects)
+            ->get()
+            ->groupBy(['current_project', 'brand_id']);
+
+        foreach ($projects as $project) {
+            foreach ($brands as $brand) {
+                $projectBrandTyres = $tyres[$project][$brand->id] ?? collect();
+
+                $activeTyres = $projectBrandTyres->where('is_active', 1);
+                $inactiveTyres = $projectBrandTyres->where('is_active', 0);
+
+                $total_hm = $projectBrandTyres->sum('accumulated_hm');
+                $total_price = $projectBrandTyres->sum('price');
+
+                $active_total_hm = $activeTyres->sum('accumulated_hm');
+                $active_total_price = $activeTyres->sum('price');
+
+                $inactive_total_hm = $inactiveTyres->sum('accumulated_hm');
+                $inactive_total_price = $inactiveTyres->sum('price');
+
+                $data[] = [
+                    'brand' => $brand->name,
+                    'project' => $project,
+                    'active_tyres' => $activeTyres->count(),
+                    'inactive_tyres' => $inactiveTyres->count(),
+                    'average_cph' => $total_hm && $total_price ? number_format($total_price / $total_hm, 2) : '-',
+                    'active_average_cph' => $active_total_hm && $active_total_price ? number_format($active_total_price / $active_total_hm, 2) : '-',
+                    'inactive_average_cph' => $inactive_total_hm && $inactive_total_price ? number_format($inactive_total_price / $inactive_total_hm, 2) : '-',
+                ];
+            }
+        }
         return $data;
     }
 }
