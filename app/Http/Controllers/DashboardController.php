@@ -163,18 +163,23 @@ class DashboardController extends Controller
 
     public function generate_rekap_data_by_brand_by_project()
     {
-        $brands = TyreBrand::all();
+        $brands = TyreBrand::orderBy('name', 'asc')->get();
         $projects = ['017C', '021C', '022C', '023C'];
         $data = [];
 
         $tyres = Tyre::select('brand_id', 'current_project', 'is_active', 'accumulated_hm', 'price')
             ->whereIn('current_project', $projects)
             ->get()
-            ->groupBy(['current_project', 'brand_id']);
+            ->groupBy(['brand_id', 'current_project']);
 
-        foreach ($projects as $project) {
-            foreach ($brands as $brand) {
-                $projectBrandTyres = $tyres[$project][$brand->id] ?? collect();
+        foreach ($brands as $brand) {
+            $brandData = [
+                'brand' => $brand->name,
+                'projects' => []
+            ];
+
+            foreach ($projects as $project) {
+                $projectBrandTyres = $tyres[$brand->id][$project] ?? collect();
 
                 $activeTyres = $projectBrandTyres->where('is_active', 1);
                 $inactiveTyres = $projectBrandTyres->where('is_active', 0);
@@ -188,9 +193,7 @@ class DashboardController extends Controller
                 $inactive_total_hm = $inactiveTyres->sum('accumulated_hm');
                 $inactive_total_price = $inactiveTyres->sum('price');
 
-                $data[] = [
-                    'brand' => $brand->name,
-                    'project' => $project,
+                $brandData['projects'][$project] = [
                     'active_tyres' => $activeTyres->count(),
                     'inactive_tyres' => $inactiveTyres->count(),
                     'average_cph' => $total_hm && $total_price ? number_format($total_price / $total_hm, 2) : '-',
@@ -198,6 +201,8 @@ class DashboardController extends Controller
                     'inactive_average_cph' => $inactive_total_hm && $inactive_total_price ? number_format($inactive_total_price / $inactive_total_hm, 2) : '-',
                 ];
             }
+
+            $data[] = $brandData;
         }
         return $data;
     }
