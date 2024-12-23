@@ -24,14 +24,10 @@
             <tbody>
                 @foreach ($by_brands_by_project as $brand)
                     <tr>
-                        <td class="border-right">{{ $brand['brand'] }}
-                        </td>
+                        <td class="border-right">{{ $brand['brand'] }}</td>
                         @foreach ($projects as $project)
                             @php
-                                $project_data = collect($by_brands_by_project)
-                                    ->where('brand', $brand['brand'])
-                                    ->where('project', $project)
-                                    ->first();
+                                $project_data = $brand['projects'][$project] ?? null;
                             @endphp
                             <td class="text-right">
                                 <small>{{ $project_data ? $project_data['active_tyres'] : 0 }}</small>

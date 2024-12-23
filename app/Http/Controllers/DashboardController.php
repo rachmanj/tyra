@@ -167,11 +167,6 @@ class DashboardController extends Controller
         $projects = ['017C', '021C', '022C', '023C'];
         $data = [];
 
-        $tyres = Tyre::select('brand_id', 'current_project', 'is_active', 'accumulated_hm', 'price')
-            ->whereIn('current_project', $projects)
-            ->get()
-            ->groupBy(['brand_id', 'current_project']);
-
         foreach ($brands as $brand) {
             $brandData = [
                 'brand' => $brand->name,
@@ -179,19 +174,24 @@ class DashboardController extends Controller
             ];
 
             foreach ($projects as $project) {
-                $projectBrandTyres = $tyres[$brand->id][$project] ?? collect();
+                // Get all tyres for this brand and project
+                $tyres = Tyre::where('brand_id', $brand->id)
+                    ->where('current_project', $project)
+                    ->get();
 
-                $activeTyres = $projectBrandTyres->where('is_active', 1);
-                $inactiveTyres = $projectBrandTyres->where('is_active', 0);
-
-                $total_hm = $projectBrandTyres->sum('accumulated_hm');
-                $total_price = $projectBrandTyres->sum('price');
-
+                // Get active tyres
+                $activeTyres = $tyres->where('is_active', 1);
                 $active_total_hm = $activeTyres->sum('accumulated_hm');
                 $active_total_price = $activeTyres->sum('price');
 
+                // Get inactive tyres
+                $inactiveTyres = $tyres->where('is_active', 0);
                 $inactive_total_hm = $inactiveTyres->sum('accumulated_hm');
                 $inactive_total_price = $inactiveTyres->sum('price');
+
+                // Calculate totals
+                $total_hm = $tyres->sum('accumulated_hm');
+                $total_price = $tyres->sum('price');
 
                 $brandData['projects'][$project] = [
                     'active_tyres' => $activeTyres->count(),
