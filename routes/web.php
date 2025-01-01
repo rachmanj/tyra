@@ -84,6 +84,8 @@ Route::middleware('auth')->group(function () {
 
     // TYRES
     Route::prefix('tyres')->name('tyres.')->group(function () {
+        Route::get('/search', [TyreController::class, 'search'])->name('search');
+        Route::get('/search-data', [TyreController::class, 'searchData'])->name('search.data');
         Route::get('/data', [TyreController::class, 'data'])->name('data');
         Route::get('/{id}/data', [TyreController::class, 'histories_data'])->name('histories.data');
         Route::delete('/histories/{transaction_id}', [TyreController::class, 'transaction_destroy'])->name('transaction.destroy');
@@ -91,8 +93,8 @@ Route::middleware('auth')->group(function () {
         Route::put('/reset/{id}', [TyreController::class, 'reset_hm'])->name('reset_hm');
         // test
         Route::get('/{id}/test', [TyreController::class, 'test'])->name('test');
+        Route::resource('/', TyreController::class)->parameters(['' => 'tyre']);
     });
-    Route::resource('tyres', TyreController::class);
 
     // TRANSACTIONS
     Route::prefix('transactions')->name('transactions.')->group(function () {

@@ -12,6 +12,8 @@ use App\Models\TyreSize;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 
 class TyreController extends Controller
 {
@@ -24,30 +26,53 @@ class TyreController extends Controller
 
     public function index()
     {
-        return view('tyres.index');
-    }
+        $page = request()->query('page', 'search');
 
-    public function create()
-    {
-        $sizes = TyreSize::orderBy('description', 'asc')->get();
         $brands = TyreBrand::orderBy('name', 'asc')->get();
         $patterns = Pattern::orderBy('name', 'asc')->get();
         $suppliers = Supplier::orderBy('name', 'asc')->get();
+        $sizes = TyreSize::orderBy('description', 'asc')->get();
 
-        // get roles of user
-        $roles = app(ToolController::class)->getUserRoles();
+        $views = [
+            'search' => 'tyres.search',
+            'new' => 'tyres.create',
+            'list' => 'tyres.list',
+        ];
 
-        if (in_array('superadmin', $roles) || in_array('admin', $roles)) {
+        $data = [];
+
+        if ($page === 'search') {
             $projects = app(ToolController::class)->getProjects();
-        } else {
-            $projects = app(ToolController::class)->getProjects();
-            $projects = array_filter($projects, function ($item) {
-                return $item['project_code'] == auth()->user()->project;
-            });
+
+            $data = [
+                'brands' => $brands,
+                'patterns' => $patterns,
+                'suppliers' => $suppliers,
+                'projects' => $projects,
+            ];
+        } elseif ($page === 'new') {
+
+            $roles = app(ToolController::class)->getUserRoles();
+
+            if (array_intersect($roles, ['superadmin', 'admin'])) {
+                $projects = app(ToolController::class)->getProjects();
+            } else {
+                $projects = app(ToolController::class)->getProjects();
+                $projects = array_filter($projects, function ($item) {
+                    return $item['project_code'] == auth()->user()->project;
+                });
+            }
+
+            $data = [
+                'sizes' => $sizes,
+                'brands' => $brands,
+                'patterns' => $patterns,
+                'suppliers' => $suppliers,
+                'projects' => $projects,
+            ];
         }
 
-        return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers', 'projects'));
-        // return view('tyres.create', compact('sizes', 'brands', 'patterns', 'suppliers'));
+        return view($views[$page], $data);
     }
 
     public function store(Request $request)
@@ -74,7 +99,7 @@ class TyreController extends Controller
             'created_by' => auth()->user()->id
         ]));
 
-        return redirect()->route('tyres.index')->with('success', 'Tyre created successfully.');
+        return redirect()->route('tyres.index', ['page' => 'new'])->with('success', 'Tyre created successfully.');
     }
 
     public function show($id)
@@ -144,7 +169,7 @@ class TyreController extends Controller
             'warranty_exp_hm' => $request->warranty_exp_hm ?? null,
         ]));
 
-        return redirect()->route('tyres.index')->with('success', 'Tyre updated successfully.');
+        return redirect()->route('tyres.index', ['page' => 'search'])->with('success', 'Tyre updated successfully.');
     }
 
     public function destroy($id)
@@ -309,6 +334,59 @@ class TyreController extends Controller
             ->addIndexColumn()
             ->addColumn('action', 'tyres.action')
             ->rawColumns(['action', 'serial_number', 'is_active', 'hours_target'])
+            ->toJson();
+    }
+
+    public function searchData(Request $request)
+    {
+        $query = Tyre::with(['brand', 'pattern', 'supplier']);
+
+        return datatables()
+            ->eloquent($query)
+            ->addIndexColumn()
+            ->addColumn('brand_name', function ($tyre) {
+                return $tyre->brand->name ?? 'N/A';
+            })
+            ->addColumn('pattern_name', function ($tyre) {
+                return $tyre->pattern->name ?? 'N/A';
+            })
+            ->addColumn('supplier_name', function ($tyre) {
+                return $tyre->supplier->name ?? 'N/A';
+            })
+            ->addColumn('is_active', function ($tyre) {
+                return $tyre->is_active ?
+                    '<span class="badge badge-success">Active</span>' :
+                    '<span class="badge badge-danger">Inactive</span>';
+            })
+            ->addColumn('action', function ($tyre) {
+                return '<a href="/tyres/' . $tyre->id . '/edit" class="btn btn-xs btn-info" title="Edit Tyre">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="/tyres/' . $tyre->id . '" class="btn btn-xs btn-primary" title="View Tyre Detail">
+                                <i class="fas fa-eye"></i>
+                            </a>';
+            })
+            ->rawColumns(['is_active', 'action'])
+            ->filter(function ($query) use ($request) {
+                if ($request->filled('serial_number')) {
+                    $query->where('serial_number', 'like', '%' . $request->serial_number . '%');
+                }
+                if ($request->filled('brand')) {
+                    $query->where('brand_id', $request->brand);
+                }
+                if ($request->filled('pattern')) {
+                    $query->where('pattern_id', $request->pattern);
+                }
+                if ($request->filled('project')) {
+                    $query->where('current_project', $request->project);
+                }
+                if ($request->filled('status')) {
+                    $query->where('is_active', $request->status);
+                }
+                if ($request->filled('po_no')) {
+                    $query->where('po_no', 'like', '%' . $request->po_no . '%');
+                }
+            })
             ->toJson();
     }
 }

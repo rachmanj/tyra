@@ -1,7 +1,7 @@
 @extends('templates.main')
 
 @section('title_page')
-  Tyres  
+    Tyres
 @endsection
 
 @section('breadcrumb_title')
@@ -15,7 +15,8 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Edit Tyre</h3>
-                    <a href="{{ route('tyres.index') }}" class="btn btn-sm btn-primary float-right"><i class="fas fa-arrow-left"></i> Back</a>
+                    <a href="{{ route('tyres.index') }}" class="btn btn-sm btn-primary float-right"><i
+                            class="fas fa-arrow-left"></i> Back</a>
                 </div>
 
                 <form action="{{ route('tyres.update', $tyre->id) }}" method="POST">
@@ -26,31 +27,37 @@
                             <div class="col-6">
                                 <div class="form-group">
                                     <label for="serial_number">Serial Number</label>
-                                    <input type="text" name="serial_number" id="serial_number" value="{{ old('serial_number', $tyre->serial_number) }}" class="form-control @error('serial_number') is-invalid @enderror">
+                                    <input type="text" name="serial_number" id="serial_number"
+                                        value="{{ old('serial_number', $tyre->serial_number) }}"
+                                        class="form-control @error('serial_number') is-invalid @enderror">
                                     @error('serial_number')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="prod_year">Production Year</label>
-                                    <input type="text" name="prod_year" id="prod_year" value="{{ old('prod_year', $tyre->prod_year) }}" class="form-control @error('prod_year') is-invalid @enderror">
+                                    <input type="text" name="prod_year" id="prod_year"
+                                        value="{{ old('prod_year', $tyre->prod_year) }}"
+                                        class="form-control @error('prod_year') is-invalid @enderror">
                                     @error('prod_year')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="is_new">Tyre Status</label><br>
-                                    <input type="radio" value="1" name="is_new" {{ $tyre->is_new == 1 ? 'checked' : null }}>
+                                    <input type="radio" value="1" name="is_new"
+                                        {{ $tyre->is_new == 1 ? 'checked' : null }}>
                                     <label for="is_new">New</label>
-                                    <input type="radio" value="0" name="is_new" {{ $tyre->is_new == 0 ? 'checked' : null }}>
+                                    <input type="radio" value="0" name="is_new"
+                                        {{ $tyre->is_new == 0 ? 'checked' : null }}>
                                     <label for="is_new">Used</label>
                                 </div>
                             </div>
@@ -60,9 +67,12 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="size_id">Size</label>
-                                    <select name="size_id" class="form-control select2bs4 @error('size_id') is-invalid @enderror">
+                                    <select name="size_id"
+                                        class="form-control select2bs4 @error('size_id') is-invalid @enderror">
                                         @foreach ($sizes as $size)
-                                        <option value="{{ $size->id }}" {{ old('size_id', $tyre->size_id) == $size->id ? 'selected' : null }}>{{ $size->description }}</option>
+                                            <option value="{{ $size->id }}"
+                                                {{ old('size_id', $tyre->size_id) == $size->id ? 'selected' : null }}>
+                                                {{ $size->description }}</option>
                                         @endforeach
                                     </select>
                                     @error('size_id')
@@ -75,9 +85,12 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="brand_id">Brand</label>
-                                    <select name="brand_id" class="form-control select2bs4 @error('brand_id') is-invalid @enderror">
+                                    <select name="brand_id"
+                                        class="form-control select2bs4 @error('brand_id') is-invalid @enderror">
                                         @foreach ($brands as $brand)
-                                        <option value="{{ $brand->id }}" {{ old('brand_id', $tyre->brand_id) == $brand->id ? "selected" : "" }}>{{ $brand->name }}</option>
+                                            <option value="{{ $brand->id }}"
+                                                {{ old('brand_id', $tyre->brand_id) == $brand->id ? 'selected' : '' }}>
+                                                {{ $brand->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('brand_id')
@@ -90,16 +103,19 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="pattern_id">Pattern</label>
-                                    <select name="pattern_id" class="form-control select2bs4 @error('pattern_id') is-invalid @enderror">
+                                    <select name="pattern_id"
+                                        class="form-control select2bs4 @error('pattern_id') is-invalid @enderror">
                                         <option value="">-- select Tyre Pattern --</option>
                                         @foreach ($patterns as $pattern)
-                                        <option value="{{ $pattern->id }}" {{ old('pattern_id', $tyre->pattern_id) == $pattern->id ? "selected" : "" }}>{{ $pattern->name }}</option>
+                                            <option value="{{ $pattern->id }}"
+                                                {{ old('pattern_id', $tyre->pattern_id) == $pattern->id ? 'selected' : '' }}>
+                                                {{ $pattern->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('pattern_id')
-                                    <div class="invalid-feedback">
-                                        {{ $message }}
-                                    </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
@@ -109,55 +125,65 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="po_no">PO No</label>
-                                    <input type="text" name="po_no" id="po_no" value="{{ old('po_no', $tyre->po_no) }}" class="form-control @error('po_no') is-invalid @enderror">
+                                    <input type="text" name="po_no" id="po_no"
+                                        value="{{ old('po_no', $tyre->po_no) }}"
+                                        class="form-control @error('po_no') is-invalid @enderror">
                                     @error('po_no')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="do_no">DO No</label>
-                                    <input type="text" name="do_no" id="do_no" value="{{ old('do_no', $tyre->do_no) }}" class="form-control @error('do_no') is-invalid @enderror">
+                                    <input type="text" name="do_no" id="do_no"
+                                        value="{{ old('do_no', $tyre->do_no) }}"
+                                        class="form-control @error('do_no') is-invalid @enderror">
                                     @error('do_no')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="form-group">
                                     <label for="otd">OTD</label>
-                                    <input type="text" name="otd" id="otd" value="{{ old('otd', $tyre->otd) }}" class="form-control @error('otd') is-invalid @enderror">
+                                    <input type="text" name="otd" id="otd"
+                                        value="{{ old('otd', $tyre->otd) }}"
+                                        class="form-control @error('otd') is-invalid @enderror">
                                     @error('otd')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="form-group">
                                     <label for="pressure">Pressure</label>
-                                    <input type="text" name="pressure" id="pressure" value="{{ old('pressure', $tyre->pressure) }}" class="form-control @error('pressure') is-invalid @enderror">
+                                    <input type="text" name="pressure" id="pressure"
+                                        value="{{ old('pressure', $tyre->pressure) }}"
+                                        class="form-control @error('pressure') is-invalid @enderror">
                                     @error('pressure')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-2">
                                 <div class="form-group">
                                     <label for="hours_target">Hours Target</label>
-                                    <input type="text" name="hours_target" id="hours_target" value="{{ old('hours_target', $tyre->hours_target) }}" class="form-control @error('hours_target') is-invalid @enderror">
+                                    <input type="text" name="hours_target" id="hours_target"
+                                        value="{{ old('hours_target', $tyre->hours_target) }}"
+                                        class="form-control @error('hours_target') is-invalid @enderror">
                                     @error('hours_target')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
@@ -167,10 +193,13 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="supplier_id">Vendor</label>
-                                    <select name="supplier_id" class="form-control select2bs4 @error('supplier_id') is-invalid @enderror">
+                                    <select name="supplier_id"
+                                        class="form-control select2bs4 @error('supplier_id') is-invalid @enderror">
                                         <option value="">-- select Vendor --</option>
                                         @foreach ($suppliers as $supplier)
-                                        <option value="{{ $supplier->id }}" {{ old('supplier_id', $tyre->supplier_id) == $supplier->id ? "selected" : "" }}>{{ $supplier->name }}</option>
+                                            <option value="{{ $supplier->id }}"
+                                                {{ old('supplier_id', $tyre->supplier_id) == $supplier->id ? 'selected' : '' }}>
+                                                {{ $supplier->name }}</option>
                                         @endforeach
                                     </select>
                                     @error('supplier_id')
@@ -183,22 +212,26 @@
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="price">Price</label>
-                                    <input type="text" name="price" id="price" value="{{ old('price', $tyre->price) }}" class="form-control @error('price') is-invalid @enderror">
+                                    <input type="text" name="price" id="price"
+                                        value="{{ old('price', $tyre->price) }}"
+                                        class="form-control @error('price') is-invalid @enderror">
                                     @error('price')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-4">
                                 <div class="form-group">
                                     <label for="receive_date">Receive Date</label>
-                                    <input type="date" name="receive_date" id="receive_date" value="{{ old('receive_date', $tyre->receive_date) }}" class="form-control @error('receive_date') is-invalid @enderror">
+                                    <input type="date" name="receive_date" id="receive_date"
+                                        value="{{ old('receive_date', $tyre->receive_date) }}"
+                                        class="form-control @error('receive_date') is-invalid @enderror">
                                     @error('receive_date')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
@@ -208,10 +241,13 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="current_project">Project</label>
-                                    <select id="current_project" name="current_project" class="form-control select2bs4 @error('current_project') is-invalid @enderror">
+                                    <select id="current_project" name="current_project"
+                                        class="form-control select2bs4 @error('current_project') is-invalid @enderror">
                                         <option value="">-- select current project --</option>
                                         @foreach ($projects as $project)
-                                        <option value="{{ $project['project_code'] }}" {{ old('current_project', $tyre->current_project) == $project['project_code'] ? "selected" : "" }}>{{ $project['project_code'] }}</option>
+                                            <option value="{{ $project['project_code'] }}"
+                                                {{ old('current_project', $tyre->current_project) == $project['project_code'] ? 'selected' : '' }}>
+                                                {{ $project['project_code'] }}</option>
                                         @endforeach
                                     </select>
                                     @error('current_project')
@@ -224,22 +260,26 @@
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="warranty_exp_date">Waranty Expire Date</label>
-                                    <input type="date" name="warranty_exp_date" id="warranty_exp_date" value="{{ old('warranty_exp_date',  $tyre->warranty_exp_date) }}" class="form-control @error('warranty_exp_date') is-invalid @enderror">
+                                    <input type="date" name="warranty_exp_date" id="warranty_exp_date"
+                                        value="{{ old('warranty_exp_date', $tyre->warranty_exp_date) }}"
+                                        class="form-control @error('warranty_exp_date') is-invalid @enderror">
                                     @error('warranty_exp_date')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
                             <div class="col-3">
                                 <div class="form-group">
                                     <label for="warranty_exp_hm">Waranty Expire HM</label>
-                                    <input type="text" name="warranty_exp_hm" id="warranty_exp_hm" value="{{ old('warranty_exp_hm',  $tyre->warranty_exp_hm) }}" class="form-control @error('warranty_exp_hm') is-invalid @enderror">
+                                    <input type="text" name="warranty_exp_hm" id="warranty_exp_hm"
+                                        value="{{ old('warranty_exp_hm', $tyre->warranty_exp_hm) }}"
+                                        class="form-control @error('warranty_exp_hm') is-invalid @enderror">
                                     @error('warranty_exp_hm')
-                                      <div class="invalid-feedback">
-                                        {{ $message }}
-                                      </div>
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
                                     @enderror
                                 </div>
                             </div>
@@ -258,64 +298,55 @@
                     </div>
 
                 </form>
-                </div>
             </div>
         </div>
+    </div>
     </div>
 @endsection
 
 @section('styles')
-  <!-- Select2 -->
-  <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
-  <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
- 
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.css') }}">
 @endsection
 
 @section('scripts')
-<!-- Select2 -->
-<script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
- {{-- axios --}}
- <script src="{{ asset('adminlte/axios/axios.min.js') }}"></script>
-<script>
-  $(function () {
-    //Initialize Select2 Elements
-    $('.select2bs4').select2({
-      theme: 'bootstrap4'
-    })
-  }) 
-</script>
-<script>
-    // on change price or hours target calculate cph
-    $('#price, #hours_target').on('change', function() {
-        var price = $('#price').val();
-        var hours_target = $('#hours_target').val();
-        var cph = price / hours_target;
-        $('#cph').val(cph.toFixed(2));
-    });
+    <!-- Select2 -->
+    <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
+    <!-- SweetAlert2 -->
+    <script src="{{ asset('adminlte/plugins/sweetalert2/sweetalert2.min.js') }}"></script>
+    {{-- axios --}}
+    <script src="{{ asset('adminlte/axios/axios.min.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            });
 
-    // // get projects list from api
-    // let url = "{{ env('URL_ARKFLEET')}}/projects";
+            // on change price or hours target calculate cph
+            $('#price, #hours_target').on('change', function() {
+                var price = $('#price').val();
+                var hours_target = $('#hours_target').val();
+                var cph = price / hours_target;
+                $('#cph').val(cph.toFixed(2));
+            });
 
-    // axios.get(url)
-    //     .then(function(response) {
-    //         let projects = response.data.data;
-    //         let select = document.getElementById('current_project');
-
-    //         for (let i = 0; i < projects.length; i++) {
-    //             let project = projects[i];
-    //             let option = document.createElement('option');
-    //             option.value = project.project_code;
-    //             option.text = project.project_code;
-    //             select.add(option);
-    //         }
-
-    //         // set option to selected project
-    //         let current_project = "{{ old('current_project', $tyre->current_project) }}";
-    //         $('#current_project').val(current_project);
-            
-    //     })
-    //     .catch(function(error) {
-    //         console.log(error);
-    //     });
-</script>
+            // Show success message if session has success
+            @if (session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(function() {
+                    // Redirect to search page after showing the message
+                    window.location.href = '{{ route('tyres.index', ['page' => 'search']) }}';
+                });
+            @endif
+        });
+    </script>
 @endsection

@@ -18,9 +18,10 @@ class ToolController extends Controller
 
     public function getProjects()
     {
-        $url = env('URL_ARKFLEET') . '/projects';
-        $response = $this->client->get($url);
-        $projects = json_decode($response->getBody()->getContents(), true)['data'];
+        // $url = env('URL_ARKFLEET') . '/projects';
+        // $response = $this->client->get($url);
+        // $projects = json_decode($response->getBody()->getContents(), true)['data'];
+        $projects = $this->defaultprojects();
 
         return $projects;
     }
@@ -65,5 +66,51 @@ class ToolController extends Controller
     public function getUserRoles()
     {
         return User::find(auth()->user()->id)->getRoleNames()->toArray();
+    }
+
+    private function defaultprojects()
+    {
+        return [
+            [
+                'project_code' => "000H",
+                'bowheer' => "Head Office",
+                'location' => "Balikpapan"
+            ],
+            [
+                'project_code' => "001H",
+                'bowheer' => "Branch Office",
+                'location' => "Jakarta"
+            ],
+            [
+                'project_code' => "005P",
+                'bowheer' => "Pratasaba Resort",
+                'location' => "Maratua, Berau"
+            ],
+            [
+                'project_code' => "017C",
+                'bowheer' => "Kayan Putra Utama Coal, PT",
+                'location' => "Malinau"
+            ],
+            [
+                'project_code' => "021C",
+                'bowheer' => "Solusi Bangun Indonesia, PT",
+                'location' => "Narogong"
+            ],
+            [
+                'project_code' => "022C",
+                'bowheer' => "Graha Panca Karsa, PT",
+                'location' => "Melak"
+            ],
+            [
+                'project_code' => "023C",
+                'bowheer' => "PT Tambang Raya Usaha Tama (TRUST) - TCM BEK",
+                'location' => "Melak"
+            ],
+            [
+                'project_code' => "APS",
+                'bowheer' => "ARKA Project Support",
+                'location' => "Kariangau"
+            ]
+        ];
     }
 }
