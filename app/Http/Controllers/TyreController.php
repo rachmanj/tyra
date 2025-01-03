@@ -359,10 +359,10 @@ class TyreController extends Controller
                     '<span class="badge badge-danger">Inactive</span>';
             })
             ->addColumn('action', function ($tyre) {
-                return '<a href="/tyres/' . $tyre->id . '/edit" class="btn btn-xs btn-info" title="Edit Tyre">
+                return '<a href="' . route('tyres.edit', $tyre->id) . '" class="btn btn-xs btn-info" title="Edit Tyre">
                                 <i class="fas fa-edit"></i>
                             </a>
-                            <a href="/tyres/' . $tyre->id . '" class="btn btn-xs btn-primary" title="View Tyre Detail">
+                            <a href="' . route('tyres.show', $tyre->id) . '" class="btn btn-xs btn-primary" title="View Tyre Detail">
                                 <i class="fas fa-eye"></i>
                             </a>';
             })

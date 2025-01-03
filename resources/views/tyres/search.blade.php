@@ -243,7 +243,7 @@
             $('#search-form button[type="reset"]').click(function() {
                 $(this).closest('form').find("input[type=text], select").val("");
                 // Reset the select2 elements for project and status
-                $('#project, #status').val(null).trigger('change');
+                $('#project, #status, #brand, #pattern, #supplier').val(null).trigger('change');
                 // Clear the table and show initial message
                 $('#search-results-table tbody').html(
                     '<tr><td colspan="10" class="text-center">Please click search to view data</td></tr>'
