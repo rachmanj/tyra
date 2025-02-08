@@ -10,6 +10,7 @@ use App\Models\Tyre;
 use App\Models\TyreBrand;
 use App\Models\TyreSize;
 use App\Models\User;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -174,7 +175,38 @@ class TyreController extends Controller
 
     public function destroy($id)
     {
-        Tyre::find($id)->delete();
+        // Check if user has permission to delete tyre
+        if (!auth()->user()->can('delete_tyre')) {
+            return redirect()->back()->with('error', 'You do not have permission to delete tyres.');
+        }
+
+        $tyre = Tyre::find($id);
+        
+        // Check if tyre exists
+        if (!$tyre) {
+            return redirect()->back()->with('error', 'Tyre not found.');
+        }
+
+        // Check if tyre has transactions
+        if ($tyre->transactions->count() > 0) {
+            return redirect()->back()->with('error', 'Cannot delete tyre with transactions.');
+        }
+
+        // Log the tyre deletion activity
+        ActivityLog::create([
+            'user_id' => auth()->id(),
+            'model_name' => 'Tyre',
+            'model_id' => $id,
+            'activity' => sprintf(
+                'Deleted tyre %s (Brand: %s, Pattern: %s, Size: %s)',
+                $tyre->serial_number,
+                $tyre->brand->name,
+                $tyre->pattern->name,
+                $tyre->size->description
+            )
+        ]);
+
+        $tyre->delete();
 
         return redirect()->route('tyres.index')->with('success', 'Tyre deleted successfully.');
     }
@@ -195,26 +227,84 @@ class TyreController extends Controller
 
     public function transaction_destroy($transaction_id)
     {
-        $transaction = Transaction::find($transaction_id);
-        $tyre = Tyre::find($transaction->tyre_id);
+        try {
+            $transaction = Transaction::find($transaction_id);
+            if (!$transaction) {
+                return redirect()->back()->with('error', 'Transaction not found.');
+            }
 
-        if ($transaction->tx_type == 'OFF') {
-            // find last transaction before $transaction
-            $last_transaction = Transaction::where('tyre_id', $tyre->id)
-                ->where('id', '<', $transaction->id)
-                ->orderBy('id', 'desc')
-                ->first();
+            $tyre = Tyre::find($transaction->tyre_id);
+            if (!$tyre) {
+                return redirect()->back()->with('error', 'Tyre not found.');
+            }
 
-            $variant_hm = $transaction->hm - $last_transaction->hm;
+            $old_hm = $tyre->accumulated_hm;
 
-            // update tyre current hm
-            $updated_tyre_hm = $tyre->accumulated_hm - $variant_hm;
-            $tyre->update(['accumulated_hm' => $updated_tyre_hm]);
+            if ($transaction->tx_type == 'OFF') {
+                // find last transaction before $transaction
+                $last_transaction = Transaction::where('tyre_id', $tyre->id)
+                    ->where('id', '<', $transaction->id)
+                    ->orderBy('id', 'desc')
+                    ->first();
+
+                // Check if there's a previous transaction
+                if (!$last_transaction) {
+                    // If no previous transaction exists, just set HM to 0
+                    $tyre->update(['accumulated_hm' => 0]);
+                    
+                    ActivityLog::create([
+                        'user_id' => auth()->id(),
+                        'model_name' => 'Tyre',
+                        'model_id' => $tyre->id,
+                        'activity' => sprintf(
+                            'HM reset to 0 due to first transaction deletion (ID: %d)',
+                            $transaction->id
+                        )
+                    ]);
+                } else {
+                    $variant_hm = $transaction->hm - $last_transaction->hm;
+
+                    // update tyre current hm
+                    $updated_tyre_hm = $tyre->accumulated_hm - $variant_hm;
+                    $tyre->update(['accumulated_hm' => $updated_tyre_hm]);
+
+                    // Log the HM change activity
+                    ActivityLog::create([
+                        'user_id' => auth()->id(),
+                        'model_name' => 'Tyre',
+                        'model_id' => $tyre->id,
+                        'activity' => sprintf(
+                            'HM updated from %s to %s due to transaction deletion (ID: %d)',
+                            number_format($old_hm, 0, ',', '.'),
+                            number_format($updated_tyre_hm, 0, ',', '.'),
+                            $transaction->id
+                        )
+                    ]);
+                }
+            }
+
+            // Log the transaction deletion activity
+            ActivityLog::create([
+                'user_id' => auth()->id(),
+                'model_name' => 'Transaction',
+                'model_id' => $transaction_id,
+                'activity' => sprintf(
+                    'Deleted transaction (ID: %d) for tyre %s - Type: %s, Unit: %s, HM: %s',
+                    $transaction->id,
+                    $tyre->serial_number,
+                    $transaction->tx_type,
+                    $transaction->unit_no ?? 'N/A',
+                    number_format($transaction->hm, 0, ',', '.')
+                )
+            ]);
+
+            $transaction->delete();
+
+            return redirect()->route('tyres.show', $tyre->id)->with('success', 'Transaction deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Error deleting transaction: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Error deleting transaction. Please try again.');
         }
-
-        $transaction->delete();
-
-        return redirect()->route('tyres.show', $tyre->id)->with('success', 'Transaction deleted successfully.');
     }
 
     public function reset_hm($id)
@@ -359,12 +449,31 @@ class TyreController extends Controller
                     '<span class="badge badge-danger">Inactive</span>';
             })
             ->addColumn('action', function ($tyre) {
-                return '<a href="' . route('tyres.edit', $tyre->id) . '" class="btn btn-xs btn-info" title="Edit Tyre">
-                                <i class="fas fa-edit"></i>
-                            </a>
-                            <a href="' . route('tyres.show', $tyre->id) . '" class="btn btn-xs btn-primary" title="View Tyre Detail">
-                                <i class="fas fa-eye"></i>
-                            </a>';
+                $html = '<a href="' . route('tyres.edit', $tyre->id) . '" class="btn btn-xs btn-info" title="Edit Tyre">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="' . route('tyres.show', $tyre->id) . '" class="btn btn-xs btn-primary" title="View Tyre Detail">
+                            <i class="fas fa-eye"></i>
+                        </a>';
+                
+                // Only add delete button if user has permission
+                if (auth()->user()->can('delete_tyre')) {
+                    $html .= '<form action="' . route('tyres.destroy', $tyre->id) . '" method="POST" class="d-inline">'
+                            . csrf_field() 
+                            . method_field('DELETE');
+                    
+                    if ($tyre->transactions->count() > 0) {
+                        $html .= '<button class="btn btn-xs btn-danger" disabled>delete</button>';
+                    } else {
+                        $html .= '<button type="submit" class="btn btn-xs btn-danger" 
+                                    onclick="return confirm(\'Are you sure you want delete this record?\')"
+                                >delete</button>';
+                    }
+                    
+                    $html .= '</form>';
+                }
+                
+                return $html;
             })
             ->rawColumns(['is_active', 'action'])
             ->filter(function ($query) use ($request) {
@@ -433,8 +542,21 @@ class TyreController extends Controller
                 ], 422);
             }
 
+            $old_hm = $tyre->accumulated_hm;
             $tyre->accumulated_hm = $request->last_hm;
             $tyre->save();
+
+            // Log the activity
+            ActivityLog::create([
+                'user_id' => auth()->id(),
+                'model_name' => 'Tyre',
+                'model_id' => $tyre->id,
+                'activity' => sprintf(
+                    'Updated HM from %s to %s',
+                    number_format($old_hm, 0, ',', '.'),
+                    number_format($request->last_hm, 0, ',', '.')
+                )
+            ]);
 
             // Calculate new avg_cph
             $tyres = Tyre::where('brand_id', $tyre->brand_id)

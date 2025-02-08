@@ -36,17 +36,19 @@
                             <h5 class="mt-3">This Brand Avg CPH : </h5>
                             <h3> <strong id="avg-cph">Loading...</strong></h3>
 
-                            <div class="form-group mt-3">
-                                <label for="last_hm">Update Last HM</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="last_hm" name="last_hm">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-sm btn-primary" id="update-hm"
-                                            data-tyre-id="{{ $tyre->id }}"
-                                            data-brand-id="{{ $tyre->brand_id }}">Update</button>
+                            @can('update_last_hm')
+                                <div class="form-group mt-3">
+                                    <label for="last_hm">Update Last HM</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="last_hm" name="last_hm">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-sm btn-primary" id="update-hm"
+                                                data-tyre-id="{{ $tyre->id }}"
+                                                data-brand-id="{{ $tyre->brand_id }}">Update</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -82,8 +84,7 @@
                                     disabled>In-Activate Tyre</a>
                             @endif
                         @endcan
-                    @else
-                        ($tyre->is_active == 0)
+                    @elseif ($tyre->is_active == 0)
                         @can('tyre_activation')
                             <a href="{{ route('tyres.activate', $tyre->id) }}"
                                 class="btn btn-sm btn-warning float-right">Activate Tyre</a>
@@ -164,7 +165,7 @@
                     filtered_equipments = equipments.filter(equipment => equipment.project ==
                         project_equipment)
                 }
-                console.log(filtered_equipments)
+
                 let select = document.getElementById('unit_no')
 
                 for (let i = 0; i < filtered_equipments.length; i++) {
