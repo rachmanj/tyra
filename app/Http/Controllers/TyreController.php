@@ -389,4 +389,78 @@ class TyreController extends Controller
             })
             ->toJson();
     }
+
+    public function getAvgCph($brand_id)
+    {
+        try {
+            $tyres = Tyre::where('brand_id', $brand_id)
+                ->where('is_active', 1)
+                ->get();
+
+            $total_price = $tyres->sum('price');
+            $total_hm = $tyres->sum('accumulated_hm');
+
+            $avg_cph = $total_hm > 0 ? $total_price / $total_hm : 0;
+
+            return response()->json([
+                'success' => true,
+                'avg_cph' => round($avg_cph, 2)
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error calculating Avg CPH: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error calculating Avg CPH'
+            ], 500);
+        }
+    }
+
+    public function updateHm(Request $request, $id)
+    {
+        try {
+            $tyre = Tyre::findOrFail($id);
+            
+            $request->validate([
+                'last_hm' => 'required|numeric|min:0'
+            ]);
+
+            // Check if new HM is less than current HM
+            if ($request->last_hm < $tyre->accumulated_hm) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'New HM cannot be less than current HM'
+                ], 422);
+            }
+
+            $tyre->accumulated_hm = $request->last_hm;
+            $tyre->save();
+
+            // Calculate new avg_cph
+            $tyres = Tyre::where('brand_id', $tyre->brand_id)
+                ->where('is_active', 1)
+                ->get();
+
+            $total_price = $tyres->sum('price');
+            $total_hm = $tyres->sum('accumulated_hm');
+            $avg_cph = $total_hm > 0 ? $total_price / $total_hm : 0;
+
+            // Calculate individual tyre CPH
+            $tyre_cph = $tyre->accumulated_hm > 0 ? $tyre->price / $tyre->accumulated_hm : 0;
+
+            return response()->json([
+                'success' => true,
+                'accumulated_hm' => $tyre->accumulated_hm,
+                'avg_cph' => round($avg_cph, 2),
+                'tyre_cph' => round($tyre_cph, 2)
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating tyre HM: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Error updating HM'
+            ], 500);
+        }
+    }
 }

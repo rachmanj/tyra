@@ -19,12 +19,34 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-10">
+                        <div class="col-8">
                             @include('tyres.show_info')
                         </div>
-                        <div class="col-2">
+                        <div class="col-4">
                             <h5>Total HM : </h5>
-                            <h3> <strong>{{ $tyre->accumulated_hm }}</strong></h3>
+                            <h3> <strong
+                                    id="accumulated-hm">{{ number_format($tyre->accumulated_hm, 0, ',', '.') }}</strong>
+                            </h3>
+
+                            <h5 class="mt-3">This Tyre CPH : </h5>
+                            <h3> <strong
+                                    id="tyre-cph">{{ $tyre->accumulated_hm > 0 ? number_format($tyre->price / $tyre->accumulated_hm, 2, ',', '.') : 'N/A' }}</strong>
+                            </h3>
+
+                            <h5 class="mt-3">This Brand Avg CPH : </h5>
+                            <h3> <strong id="avg-cph">Loading...</strong></h3>
+
+                            <div class="form-group mt-3">
+                                <label for="last_hm">Update Last HM</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="last_hm" name="last_hm">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-sm btn-primary" id="update-hm"
+                                            data-tyre-id="{{ $tyre->id }}"
+                                            data-brand-id="{{ $tyre->brand_id }}">Update</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -210,6 +232,76 @@
                 ]
             })
 
+            // Add number formatter function for Indonesian format
+            const formatNumber = (number, decimals = 0) => {
+                return new Intl.NumberFormat('id-ID', {
+                    minimumFractionDigits: decimals,
+                    maximumFractionDigits: decimals
+                }).format(number);
+            };
+
+            // Function to load and display Avg CPH
+            function loadAvgCph(brandId) {
+                axios.get(`/tyres/${brandId}/avg-cph`)
+                    .then(function(response) {
+                        if (response.data.success) {
+                            $('#avg-cph').text(formatNumber(response.data.avg_cph, 2));
+                        }
+                    })
+                    .catch(function(error) {
+                        console.error('Error loading Avg CPH:', error);
+                        $('#avg-cph').text('Error');
+                    });
+            }
+
+            // Load initial Avg CPH
+            loadAvgCph({{ $tyre->brand_id }});
+
+            // Update HM click handler
+            $('#update-hm').click(function() {
+                const tyreId = $(this).data('tyre-id');
+                const lastHm = $('#last_hm').val();
+                const currentHm = parseInt($('#accumulated-hm').text().replace(/\./g, ''));
+
+                if (!lastHm) {
+                    alert('Please enter HM value');
+                    return;
+                }
+
+                // Check if new HM is less than current HM
+                if (parseInt(lastHm) < currentHm) {
+                    alert('New HM cannot be less than current HM');
+                    return;
+                }
+
+                // Add confirmation dialog
+                if (!confirm(
+                        `Are you sure you want to update the HM to ${formatNumber(lastHm)}?`
+                    )) {
+                    return;
+                }
+
+                axios.post(`/tyres/${tyreId}/update-hm`, {
+                        last_hm: lastHm
+                    })
+                    .then(function(response) {
+                        if (response.data.success) {
+                            $('#accumulated-hm').text(formatNumber(response.data.accumulated_hm));
+                            $('#tyre-cph').text(formatNumber(response.data.tyre_cph, 2));
+                            $('#avg-cph').text(formatNumber(response.data.avg_cph, 2));
+                            $('#last_hm').val('');
+                            alert('HM updated successfully');
+                        }
+                    })
+                    .catch(function(error) {
+                        if (error.response && error.response.status === 422) {
+                            alert(error.response.data.message);
+                        } else {
+                            alert('Error updating HM');
+                        }
+                        console.error(error);
+                    });
+            });
         })
     </script>
 

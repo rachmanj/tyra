@@ -94,6 +94,8 @@ Route::middleware('auth')->group(function () {
         // test
         Route::get('/{id}/test', [TyreController::class, 'test'])->name('test');
         Route::resource('/', TyreController::class)->parameters(['' => 'tyre']);
+        Route::post('/{tyre}/update-hm', [TyreController::class, 'updateHm'])->name('tyres.update_hm');
+        Route::get('/{brand_id}/avg-cph', [TyreController::class, 'getAvgCph'])->name('avg_cph');
     });
 
     // TRANSACTIONS
