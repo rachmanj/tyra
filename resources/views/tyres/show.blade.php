@@ -137,7 +137,7 @@
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
 
     <script>
-        $(function() {
+        $(document).ready(function() {
             //Initialize Select2 Elements
             $('.select2').select2()
 
@@ -150,8 +150,6 @@
             let url = "{{ env('URL_ARKFLEET') }}/equipments"
 
             $.get(url, function(data, status) {
-
-
                 let equipments = data.data
                 //  get value of project_equipment from controller 
                 let project_equipment = "{{ $project_equipment }}"
@@ -309,7 +307,7 @@
                     }
                 });
             });
-        })
+        });
     </script>
 
     {{-- <script>
