@@ -50,6 +50,17 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="supplier">Supplier</label>
+                                    <select class="form-control select2bs4" id="supplier" name="supplier">
+                                        <option value="">-- Select Supplier --</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
@@ -179,6 +190,16 @@
                         d.status = $('#status').val();
                     }
                 },
+                columnDefs: [{
+                        "targets": 4, // Location column
+                        "width": "60px",
+                        "className": "text-center"
+                    },
+                    {
+                        "targets": 5, // Supplier column
+                        "width": "200px"
+                    }
+                ],
                 columns: [{
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
@@ -199,7 +220,8 @@
                     },
                     {
                         data: 'current_project',
-                        name: 'current_project'
+                        name: 'current_project',
+                        className: 'text-center'
                     },
                     {
                         data: 'supplier_name',
@@ -211,7 +233,8 @@
                     },
                     {
                         data: 'price',
-                        name: 'price'
+                        name: 'price',
+                        className: 'text-right'
                     },
                     {
                         data: 'is_active',
@@ -242,7 +265,7 @@
             // Handle reset button
             $('#search-form button[type="reset"]').click(function() {
                 $(this).closest('form').find("input[type=text], select").val("");
-                // Reset the select2 elements for project and status
+                // Reset the select2 elements
                 $('#project, #status, #brand, #pattern, #supplier').val(null).trigger('change');
                 // Clear the table and show initial message
                 $('#search-results-table tbody').html(

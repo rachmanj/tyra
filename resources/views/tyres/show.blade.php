@@ -135,8 +135,6 @@
     <script src="{{ asset('adminlte/plugins/datatables/datatables.min.js') }}"></script>
     <!-- Select2 -->
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
-    {{-- axios --}}
-    <script src="{{ asset('adminlte/axios/axios.min.js') }}"></script>
 
     <script>
         $(function() {
@@ -243,16 +241,19 @@
 
             // Function to load and display Avg CPH
             function loadAvgCph(brandId) {
-                axios.get(`/tyres/${brandId}/avg-cph`)
-                    .then(function(response) {
-                        if (response.data.success) {
-                            $('#avg-cph').text(formatNumber(response.data.avg_cph, 2));
+                $.ajax({
+                    url: `/tyres/${brandId}/avg-cph`,
+                    type: 'GET',
+                    success: function(response) {
+                        if (response.success) {
+                            $('#avg-cph').text(formatNumber(response.avg_cph, 2));
                         }
-                    })
-                    .catch(function(error) {
+                    },
+                    error: function(xhr, status, error) {
                         console.error('Error loading Avg CPH:', error);
                         $('#avg-cph').text('Error');
-                    });
+                    }
+                });
             }
 
             // Load initial Avg CPH
@@ -282,26 +283,31 @@
                     return;
                 }
 
-                axios.post(`/tyres/${tyreId}/update-hm`, {
-                        last_hm: lastHm
-                    })
-                    .then(function(response) {
-                        if (response.data.success) {
-                            $('#accumulated-hm').text(formatNumber(response.data.accumulated_hm));
-                            $('#tyre-cph').text(formatNumber(response.data.tyre_cph, 2));
-                            $('#avg-cph').text(formatNumber(response.data.avg_cph, 2));
+                $.ajax({
+                    url: `/tyres/${tyreId}/update-hm`,
+                    type: 'POST',
+                    data: {
+                        last_hm: lastHm,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('#accumulated-hm').text(formatNumber(response.accumulated_hm));
+                            $('#tyre-cph').text(formatNumber(response.tyre_cph, 2));
+                            $('#avg-cph').text(formatNumber(response.avg_cph, 2));
                             $('#last_hm').val('');
                             alert('HM updated successfully');
                         }
-                    })
-                    .catch(function(error) {
-                        if (error.response && error.response.status === 422) {
-                            alert(error.response.data.message);
+                    },
+                    error: function(xhr) {
+                        if (xhr.status === 422) {
+                            alert(xhr.responseJSON.message);
                         } else {
                             alert('Error updating HM');
                         }
-                        console.error(error);
-                    });
+                        console.error(xhr);
+                    }
+                });
             });
         })
     </script>

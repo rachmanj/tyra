@@ -443,6 +443,9 @@ class TyreController extends Controller
             ->addColumn('supplier_name', function ($tyre) {
                 return $tyre->supplier->name ?? 'N/A';
             })
+            ->editColumn('price', function ($tyre) {
+                return number_format($tyre->price, 0, ',', '.');
+            })
             ->addColumn('is_active', function ($tyre) {
                 return $tyre->is_active ?
                     '<span class="badge badge-success">Active</span>' :
@@ -485,6 +488,9 @@ class TyreController extends Controller
                 }
                 if ($request->filled('pattern')) {
                     $query->where('pattern_id', $request->pattern);
+                }
+                if ($request->filled('supplier')) {
+                    $query->where('supplier_id', $request->supplier);
                 }
                 if ($request->filled('project')) {
                     $query->where('current_project', $request->project);
@@ -584,5 +590,20 @@ class TyreController extends Controller
                 'message' => 'Error updating HM'
             ], 500);
         }
+    }
+
+    public function search()
+    {
+        $brands = TyreBrand::orderBy('name', 'asc')->get();
+        $patterns = Pattern::orderBy('name', 'asc')->get();
+        $suppliers = Supplier::orderBy('name', 'asc')->get();
+        $projects = app(ToolController::class)->getProjects();
+
+        return view('tyres.search', compact(
+            'brands',
+            'patterns',
+            'suppliers',
+            'projects'
+        ));
     }
 }
