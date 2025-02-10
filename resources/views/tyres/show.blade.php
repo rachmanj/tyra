@@ -240,7 +240,7 @@
             // Function to load and display Avg CPH
             function loadAvgCph(brandId) {
                 $.ajax({
-                    url: `/tyres/${brandId}/avg-cph`,
+                    url: '{{ url('/') }}/tyres/' + brandId + '/avg-cph',
                     type: 'GET',
                     success: function(response) {
                         if (response.success) {
@@ -282,7 +282,7 @@
                 }
 
                 $.ajax({
-                    url: `/tyres/${tyreId}/update-hm`,
+                    url: '{{ url('/') }}/tyres/' + tyreId + '/update-hm',
                     type: 'POST',
                     data: {
                         last_hm: lastHm,
