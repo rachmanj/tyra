@@ -38,7 +38,7 @@
 
                             @can('update_last_hm')
                                 <div class="form-group mt-3">
-                                    <label for="last_hm">Update Last HM</label>
+                                    <label for="last_hm">Update Tyre HM</label>
                                     <div class="input-group">
                                         <input type="number" class="form-control" id="last_hm" name="last_hm">
                                         <div class="input-group-append">
