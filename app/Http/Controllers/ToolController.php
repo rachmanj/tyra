@@ -113,4 +113,42 @@ class ToolController extends Controller
             ]
         ];
     }
+
+    public function getLastHm(Request $request)
+    {
+        if (!$request->ajax()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Invalid request method'
+            ], 400);
+        }
+
+        try {
+            $tyre_id = $request->tyre_id;
+           
+            // Validate tyre_id
+            if (!$tyre_id) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tyre ID is required'
+                ], 400);
+            }
+
+            $last_transaction = $this->getLastTransaction($tyre_id);
+
+            return response()->json([
+                'success' => true,
+                'current_hm' => $last_transaction ? $last_transaction->hm : 0
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Error in getLastHm: ' . $e->getMessage());
+            \Log::error('Tyre ID: ' . $request->tyre_id);
+            \Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Error getting last HM: ' . $e->getMessage()
+            ], 500);
+        }
+    }
 }

@@ -100,12 +100,24 @@ class TyreController extends Controller
             'created_by' => auth()->user()->id
         ]));
 
+        // create activity log
+        ActivityLog::create([
+            'user_id' => auth()->user()->id,
+            'model_name' => 'Tyre',
+            'model_id' => $id,
+            'activity' => "Tyre {$request->serial_number} created successfully.",
+        ]);
+
         return redirect()->route('tyres.index', ['page' => 'new'])->with('success', 'Tyre created successfully.');
     }
 
     public function show($id)
     {
         $tyre = Tyre::find($id);
+
+        if (!$tyre) {
+            return redirect()->back()->with('error', 'Tyre not found');
+        }
 
         $roles = app(ToolController::class)->getUserRoles();
 
@@ -170,6 +182,14 @@ class TyreController extends Controller
             'warranty_exp_hm' => $request->warranty_exp_hm ?? null,
         ]));
 
+        // create activity log
+        ActivityLog::create([
+            'user_id' => auth()->user()->id,
+            'model_name' => 'Tyre',
+            'model_id' => $id,
+            'activity' => "Tyre {$tyre->serial_number} updated successfully.",
+        ]);
+
         return redirect()->route('tyres.index', ['page' => 'search'])->with('success', 'Tyre updated successfully.');
     }
 
@@ -221,6 +241,14 @@ class TyreController extends Controller
             $tyre->is_active = 1;
         }
         $tyre->save();
+
+        // create activity log
+        ActivityLog::create([
+            'user_id' => auth()->user()->id,
+            'model_name' => 'Tyre',
+            'model_id' => $id,
+            'activity' => "Tyre activation status changed to " . ($tyre->is_active == 1 ? 'active' : 'inactive'),
+        ]);
 
         return redirect()->route('tyres.show', $id)->with('success', 'Tyre activation status changed successfully.');
     }
@@ -316,6 +344,14 @@ class TyreController extends Controller
             'accumulated_hm' => 0,
         ]);
 
+        // create activity log
+        ActivityLog::create([
+            'user_id' => auth()->user()->id,
+            'model_name' => 'Tyre',
+            'model_id' => $id,
+            'activity' => "Tyre HM reset successfully. Last HM before reset: $last_accumulated_hm",
+        ]);
+
         return redirect()->route('tyres.show', $id)->with('success', 'Tyre HM reset successfully.');
     }
 
@@ -378,11 +414,20 @@ class TyreController extends Controller
 
     public function histories_data($id)
     {
-        $histories = Transaction::where('tyre_id', $id)->orderBy('date', 'desc')->get();
+        $histories = Transaction::where('tyre_id', $id)
+            ->orderBy('id', 'desc')
+            ->get();
 
         return datatables()->of($histories)
+            ->addIndexColumn()
             ->editColumn('date', function ($history) {
-                return Carbon::parse($history->date)->format('d-M-Y');
+                return date('d-M-Y', strtotime($history->date));
+            })
+            ->editColumn('tx_type', function ($history) {
+                if ($history->tx_type === 'UHM') {
+                    return '<span data-toggle="tooltip" title="' . e($history->remark) . '">UHM</span>';
+                }
+                return $history->tx_type;
             })
             ->editColumn('rtd1', function ($history) {
                 $rtd1 = $history->rtd1 ?? "n/a";
@@ -392,9 +437,8 @@ class TyreController extends Controller
             ->addColumn('removal_reason', function ($history) {
                 return $history->removal_reason_id ? $history->removalReason->description : "n/a";
             })
-            ->addIndexColumn()
             ->addColumn('action_button', 'tyres.histories_action')
-            ->rawColumns(['action_button'])
+            ->rawColumns(['action_button', 'tx_type'])
             ->toJson();
     }
 
@@ -527,67 +571,6 @@ class TyreController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Error calculating Avg CPH'
-            ], 500);
-        }
-    }
-
-    public function updateHm(Request $request, $id)
-    {
-        try {
-            $tyre = Tyre::findOrFail($id);
-            
-            $request->validate([
-                'last_hm' => 'required|numeric|min:0'
-            ]);
-
-            // Check if new HM is less than current HM
-            if ($request->last_hm < $tyre->accumulated_hm) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'New HM cannot be less than current HM'
-                ], 422);
-            }
-
-            $old_hm = $tyre->accumulated_hm;
-            $tyre->accumulated_hm = $request->last_hm;
-            $tyre->save();
-
-            // Log the activity
-            ActivityLog::create([
-                'user_id' => auth()->id(),
-                'model_name' => 'Tyre',
-                'model_id' => $tyre->id,
-                'activity' => sprintf(
-                    'Updated HM from %s to %s',
-                    number_format($old_hm, 0, ',', '.'),
-                    number_format($request->last_hm, 0, ',', '.')
-                )
-            ]);
-
-            // Calculate new avg_cph
-            $tyres = Tyre::where('brand_id', $tyre->brand_id)
-                ->where('is_active', 1)
-                ->get();
-
-            $total_price = $tyres->sum('price');
-            $total_hm = $tyres->sum('accumulated_hm');
-            $avg_cph = $total_hm > 0 ? $total_price / $total_hm : 0;
-
-            // Calculate individual tyre CPH
-            $tyre_cph = $tyre->accumulated_hm > 0 ? $tyre->price / $tyre->accumulated_hm : 0;
-
-            return response()->json([
-                'success' => true,
-                'accumulated_hm' => $tyre->accumulated_hm,
-                'avg_cph' => round($avg_cph, 2),
-                'tyre_cph' => round($tyre_cph, 2)
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Error updating tyre HM: ' . $e->getMessage());
-            
-            return response()->json([
-                'success' => false,
-                'message' => 'Error updating HM'
             ], 500);
         }
     }

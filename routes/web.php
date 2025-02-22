@@ -18,6 +18,7 @@ use App\Http\Controllers\TyreSizeController;
 use App\Http\Controllers\TyreBrandController;
 use App\Http\Controllers\TyreController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ToolController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -87,6 +88,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/search', [TyreController::class, 'search'])->name('search');
         Route::get('/search-data', [TyreController::class, 'searchData'])->name('search.data');
         Route::get('/data', [TyreController::class, 'data'])->name('data');
+        Route::get('/get-last-hm', [ToolController::class, 'getLastHm'])->name('get_last_hm');
         Route::get('/{id}/data', [TyreController::class, 'histories_data'])->name('histories.data');
         Route::delete('/histories/{transaction_id}', [TyreController::class, 'transaction_destroy'])->name('transaction.destroy');
         Route::get('/activate/{id}', [TyreController::class, 'activate'])->name('activate');
@@ -94,7 +96,7 @@ Route::middleware('auth')->group(function () {
         // test
         Route::get('/{id}/test', [TyreController::class, 'test'])->name('test');
         Route::resource('/', TyreController::class)->parameters(['' => 'tyre']);
-        Route::post('/{tyre}/update-hm', [TyreController::class, 'updateHm'])->name('tyres.update_hm');
+        Route::post('/{id}/update-hm', [TransactionController::class, 'updateHm'])->name('tyres.update_hm');
         Route::get('/{brand_id}/avg-cph', [TyreController::class, 'getAvgCph'])->name('avg_cph');
     });
 

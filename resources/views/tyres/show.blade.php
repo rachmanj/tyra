@@ -40,9 +40,10 @@
                                 <div class="form-group mt-3">
                                     <label for="last_hm">Update Tyre HM</label>
                                     <div class="input-group">
-                                        <input type="number" class="form-control" id="last_hm" name="last_hm">
+                                        <input type="number" class="form-control" id="last_hm" name="last_hm" min="0"
+                                            autocomplete="off" placeholder="Enter new HM value">
                                         <div class="input-group-append">
-                                            <button class="btn btn-sm btn-primary" id="update-hm"
+                                            <button type="button" class="btn btn-sm btn-primary" id="update-hm"
                                                 data-tyre-id="{{ $tyre->id }}"
                                                 data-brand-id="{{ $tyre->brand_id }}">Update</button>
                                         </div>
@@ -181,10 +182,17 @@
                 }
             })
 
+            // Initialize tooltips
+            $('[data-toggle="tooltip"]').tooltip();
+
             $("#table-histories").DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: '{{ route('tyres.histories.data', $tyre->id) }}',
+                drawCallback: function() {
+                    // Re-initialize tooltips after table redraw
+                    $('[data-toggle="tooltip"]').tooltip();
+                },
                 columns: [{
                         data: 'DT_RowIndex',
                         orderable: false,
@@ -258,22 +266,50 @@
             loadAvgCph({{ $tyre->brand_id }});
 
             // Update HM click handler
-            $('#update-hm').click(function() {
+            $('#update-hm').click(function(e) {
+                e.preventDefault();
+
                 const tyreId = $(this).data('tyre-id');
                 const lastHm = $('#last_hm').val();
-                const currentHm = parseInt($('#accumulated-hm').text().replace(/\./g, ''));
 
                 if (!lastHm) {
                     alert('Please enter HM value');
                     return;
                 }
 
-                // Check if new HM is less than current HM
-                if (parseInt(lastHm) < currentHm) {
-                    alert('New HM cannot be less than current HM');
-                    return;
-                }
+                // Get last transaction HM and validate
+                $.ajax({
+                    url: '{{ url('/tyres/get-last-hm') }}',
+                    type: 'GET',
+                    data: {
+                        tyre_id: tyreId
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            const currentHm = response.current_hm;
 
+                            if (parseInt(lastHm) < currentHm) {
+                                alert('New HM cannot be less than last transaction HM (' +
+                                    formatNumber(currentHm) + ')');
+                                return;
+                            }
+
+                            // If validation passes, proceed with update
+                            updateTyreHm(tyreId, lastHm);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert(xhr.responseJSON?.message || 'Error validating HM value');
+                    }
+                });
+            });
+
+            // Function to update tyre HM
+            function updateTyreHm(tyreId, lastHm) {
                 // Add confirmation dialog
                 if (!confirm(
                         `Are you sure you want to update the HM to ${formatNumber(lastHm)}?`
@@ -288,12 +324,17 @@
                         last_hm: lastHm,
                         _token: '{{ csrf_token() }}'
                     },
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    },
                     success: function(response) {
                         if (response.success) {
                             $('#accumulated-hm').text(formatNumber(response.accumulated_hm));
                             $('#tyre-cph').text(formatNumber(response.tyre_cph, 2));
                             $('#avg-cph').text(formatNumber(response.avg_cph, 2));
                             $('#last_hm').val('');
+                            $('#table-histories').DataTable().ajax.reload();
                             alert('HM updated successfully');
                         }
                     },
@@ -301,12 +342,11 @@
                         if (xhr.status === 422) {
                             alert(xhr.responseJSON.message);
                         } else {
-                            alert('Error updating HM');
+                            alert(xhr.responseJSON?.message || 'Error updating HM');
                         }
-                        console.error(xhr);
                     }
                 });
-            });
+            }
         });
     </script>
 
