@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\Tyre;
+use App\Models\ActivityLog;
 use Illuminate\Http\Request;
 use App\Models\RemovalReason;
+use Illuminate\Support\Facades\DB;
 
 class TransactionController extends Controller
 {
@@ -52,7 +54,7 @@ class TransactionController extends Controller
             $tx_type = $request->tx_type;
         }
 
-        Transaction::create(array_merge($validated, [
+        $transaction = Transaction::create(array_merge($validated, [
             'project' => $tyre->current_project,
             'tx_type' => $tx_type,
             'removal_reason_id' => $request->removal_reason_id,
@@ -63,9 +65,9 @@ class TransactionController extends Controller
         // create activity log
         ActivityLog::create([
             'user_id' => auth()->user()->id,
-           'model_name' => 'Transaction',
-           'model_id' => $transaction->id,
-           'activity' => "Created new transaction with type $tx_type for tyre {$tyre->serial_number} on unit {$validated['unit_no']}",
+            'model_name' => 'Transaction',
+            'model_id' => $transaction->id,
+            'activity' => "Created new transaction with type $tx_type for tyre {$tyre->serial_number} on unit {$validated['unit_no']}",
         ]);
 
         if ($request->form_type == 'show_tyre_install' || $request->form_type == 'show_tyre_remove')
@@ -111,7 +113,7 @@ class TransactionController extends Controller
     public function updateHm(Request $request, $id)
     {
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             // Validate request
             $request->validate([
@@ -120,10 +122,11 @@ class TransactionController extends Controller
 
             // Get the tyre
             $tyre = Tyre::findOrFail($id);
-            
+            $accumulated_hm_before_update = $tyre->accumulated_hm;
+
             // Get last transaction
             $last_transaction = app(ToolController::class)->getLastTransaction($id);
-            
+
             // Validate HM is not less than last transaction
             if ($last_transaction && $request->last_hm < $last_transaction->hm) {
                 return response()->json([
@@ -160,7 +163,7 @@ class TransactionController extends Controller
                 'user_id' => auth()->user()->id,
                 'model_name' => 'Transaction',
                 'model_id' => $transaction->id,
-                'activity' => "Updated HM to $request->last_hm for tyre {$tyre->serial_number} on unit {$last_transaction->unit_no}",
+                'activity' => "Updated HM to $request->last_hm for tyre {$tyre->serial_number} on unit {$last_transaction->unit_no} (accum HM before: {$accumulated_hm_before_update})",
             ]);
 
             // Calculate new CPH
@@ -170,14 +173,14 @@ class TransactionController extends Controller
             $avg_cph = 0;
             $tyres = Tyre::where('brand_id', $tyre->brand_id)
                 ->where('is_active', 1)
-                ->get();            
+                ->get();
             if ($tyres->count() > 0) {
                 $total_price = $tyres->sum('price');
                 $total_hm = $tyres->sum('accumulated_hm');
                 $avg_cph = $total_hm > 0 ? $total_price / $total_hm : 0;
             }
 
-            \DB::commit();
+            DB::commit();
 
             return response()->json([
                 'success' => true,
@@ -185,12 +188,8 @@ class TransactionController extends Controller
                 'tyre_cph' => round($tyre_cph, 2),
                 'avg_cph' => round($avg_cph, 2)
             ]);
-
         } catch (\Exception $e) {
-            \DB::rollback();
-            \Log::error('Error in updateHm: ' . $e->getMessage());
-            \Log::error('Tyre ID: ' . $id);
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            DB::rollback();
 
             return response()->json([
                 'success' => false,

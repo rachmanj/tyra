@@ -94,7 +94,7 @@ class TyreController extends Controller
             'pressure' => 'required|numeric',
         ]);
 
-        Tyre::create(array_merge($request->all(), [
+        $tyre = Tyre::create(array_merge($request->all(), [
             'warranty_exp_date' => $request->warranty_exp_date ?? null,
             'warranty_exp_hm' => $request->warranty_exp_hm ?? null,
             'created_by' => auth()->user()->id
@@ -104,7 +104,7 @@ class TyreController extends Controller
         ActivityLog::create([
             'user_id' => auth()->user()->id,
             'model_name' => 'Tyre',
-            'model_id' => $id,
+            'model_id' => $tyre->id,
             'activity' => "Tyre {$request->serial_number} created successfully.",
         ]);
 
@@ -201,7 +201,7 @@ class TyreController extends Controller
         }
 
         $tyre = Tyre::find($id);
-        
+
         // Check if tyre exists
         if (!$tyre) {
             return redirect()->back()->with('error', 'Tyre not found.');
@@ -268,7 +268,7 @@ class TyreController extends Controller
 
             $old_hm = $tyre->accumulated_hm;
 
-            if ($transaction->tx_type == 'OFF') {
+            if ($transaction->tx_type == 'OFF' || $transaction->tx_type == 'UHM') {
                 // find last transaction before $transaction
                 $last_transaction = Transaction::where('tyre_id', $tyre->id)
                     ->where('id', '<', $transaction->id)
@@ -279,7 +279,7 @@ class TyreController extends Controller
                 if (!$last_transaction) {
                     // If no previous transaction exists, just set HM to 0
                     $tyre->update(['accumulated_hm' => 0]);
-                    
+
                     ActivityLog::create([
                         'user_id' => auth()->id(),
                         'model_name' => 'Tyre',
@@ -502,13 +502,13 @@ class TyreController extends Controller
                         <a href="' . route('tyres.show', $tyre->id) . '" class="btn btn-xs btn-primary" title="View Tyre Detail">
                             <i class="fas fa-eye"></i>
                         </a>';
-                
+
                 // Only add delete button if user has permission
                 if (auth()->user()->can('delete_tyre')) {
                     $html .= '<form action="' . route('tyres.destroy', $tyre->id) . '" method="POST" class="d-inline">'
-                            . csrf_field() 
-                            . method_field('DELETE');
-                    
+                        . csrf_field()
+                        . method_field('DELETE');
+
                     if ($tyre->transactions->count() > 0) {
                         $html .= '<button class="btn btn-xs btn-danger" disabled>delete</button>';
                     } else {
@@ -516,10 +516,10 @@ class TyreController extends Controller
                                     onclick="return confirm(\'Are you sure you want delete this record?\')"
                                 >delete</button>';
                     }
-                    
+
                     $html .= '</form>';
                 }
-                
+
                 return $html;
             })
             ->rawColumns(['is_active', 'action'])
@@ -567,7 +567,7 @@ class TyreController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Error calculating Avg CPH: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Error calculating Avg CPH'
