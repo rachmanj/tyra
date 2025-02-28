@@ -65,7 +65,9 @@
                             <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#tyre_install"
                                 disabled>Install Tyre</button>
                         @endif
-                        @if ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'ON')
+                        @if (
+                            ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'ON') ||
+                                ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'UHM'))
                             <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tyre_remove">Remove
                                 Tyre</button>
                         @else
