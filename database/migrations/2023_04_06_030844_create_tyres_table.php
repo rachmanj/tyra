@@ -33,7 +33,7 @@ return new class extends Migration
             $table->integer('prod_year')->nullable();
             $table->integer('hours_target')->nullable();
             $table->string('TyreCPH')->nullable(); // migration
-            $table->integer('accumulated_hm')->default(0)->after('hours_target');
+            $table->integer('accumulated_hm')->default(0);
             $table->boolean('is_active')->default(true);
             $table->boolean('is_new')->default(true);
             $table->date('warranty_exp_date')->nullable(); // waranty expire date
