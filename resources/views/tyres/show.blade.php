@@ -56,53 +56,67 @@
 
                 {{-- INSTALL REMOVE BUTTONS --}}
                 <div class="card-footer">
-                    @if ($tyre->is_active == 1)
-                        {{-- if tyre has no transactions or if the transaction type is OFF --}}
-                        @if ($tyre->transactions->count() < 1 || ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'OFF'))
-                            <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#tyre_install">Install
-                                Tyre</button>
-                        @else
-                            <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#tyre_install"
-                                disabled>Install Tyre</button>
-                        @endif
-                        @if (
-                            ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'ON') ||
-                                ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'UHM'))
-                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tyre_remove">Remove
-                                Tyre</button>
-                        @else
-                            <button class="btn btn-sm btn-primary" data-toggle="modal" data-target="#tyre_remove"
-                                disabled>Remove Tyre</button>
-                        @endif
-
-                        {{-- IN-ACTIVATE BUTTON --}}
-
-                        {{-- if tyre has no transactions or if the transaction type is OFF --}}
-                        @can('tyre_activation')
-                            @if ($tyre->transactions->count() < 1 || ($last_transaction && $last_transaction->tx_type == 'OFF'))
-                                <a href="{{ route('tyres.activate', $tyre->id) }}"
-                                    class="btn btn-sm btn-warning float-right">In-Activate Tyre</a>
-                            @else
-                                <a href="{{ route('tyres.activate', $tyre->id) }}" class="btn btn-sm btn-warning float-right"
-                                    disabled>In-Activate Tyre</a>
+                    <div class="d-flex justify-content-between align-items-center">
+                        {{-- LEFT SIDE: Install/Remove Buttons --}}
+                        <div>
+                            @if ($tyre->is_active == 1)
+                                {{-- if tyre has no transactions or if the transaction type is OFF --}}
+                                @if ($tyre->transactions->count() < 1 || ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'OFF'))
+                                    <button class="btn btn-sm btn-success" data-toggle="modal"
+                                        data-target="#tyre_install">Install
+                                        Tyre</button>
+                                @else
+                                    <button class="btn btn-sm btn-success" data-toggle="modal" data-target="#tyre_install"
+                                        disabled>Install Tyre</button>
+                                @endif
+                                @if (
+                                    ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'ON') ||
+                                        ($tyre->transactions->count() > 0 && $last_transaction->tx_type == 'UHM'))
+                                    <button class="btn btn-sm btn-primary ml-2" data-toggle="modal"
+                                        data-target="#tyre_remove">Remove
+                                        Tyre</button>
+                                @else
+                                    <button class="btn btn-sm btn-primary ml-2" data-toggle="modal"
+                                        data-target="#tyre_remove" disabled>Remove Tyre</button>
+                                @endif
                             @endif
-                        @endcan
-                    @elseif ($tyre->is_active == 0)
-                        @can('tyre_activation')
-                            <a href="{{ route('tyres.activate', $tyre->id) }}"
-                                class="btn btn-sm btn-warning float-right">Activate Tyre</a>
-                        @endcan
-                    @endif
-                    {{-- RESET HM BUTTON --}}
-                    @if ($tyre->accumulated_hm !== 0)
-                        @can('reset_hm')
-                            <form action="{{ route('tyres.reset_hm', $tyre->id) }}" method="POST">
-                                @csrf @method('PUT')
-                                <button type="submit" class="btn btn-sm btn-danger float-right mt-2"
-                                    onclick="return confirm('Are you sure you want to reset HM?')">RESET HM</button>
-                            </form>
-                        @endcan
-                    @endif
+                        </div>
+
+                        {{-- RIGHT SIDE: Activate/Inactive & Reset HM Buttons --}}
+                        <div>
+                            @if ($tyre->is_active == 1)
+                                {{-- IN-ACTIVATE BUTTON --}}
+                                @can('tyre_activation')
+                                    @if ($tyre->transactions->count() < 1 || ($last_transaction && $last_transaction->tx_type == 'OFF'))
+                                        <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#tyre_inactive">
+                                            In-Activate Tyre
+                                        </button>
+                                    @else
+                                        <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#tyre_inactive">
+                                            In-Activate Tyre
+                                        </button>
+                                    @endif
+                                @endcan
+                            @elseif ($tyre->is_active == 0)
+                                @can('tyre_activation')
+                                    <a href="{{ route('tyres.activate', $tyre->id) }}" class="btn btn-sm btn-warning">Activate
+                                        Tyre</a>
+                                @endcan
+                            @endif
+
+                            {{-- RESET HM BUTTON --}}
+                            @if ($tyre->accumulated_hm !== 0)
+                                @can('reset_hm')
+                                    <form action="{{ route('tyres.reset_hm', $tyre->id) }}" method="POST"
+                                        class="d-inline ml-2">
+                                        @csrf @method('PUT')
+                                        <button type="submit" class="btn btn-sm btn-danger"
+                                            onclick="return confirm('Are you sure you want to reset HM?')">RESET HM</button>
+                                    </form>
+                                @endcan
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
                 {{-- HISTORIES --}}
@@ -115,6 +129,7 @@
     {{-- MODAL --}}
     @include('tyres.install_create')
     @include('tyres.remove_create')
+    @include('tyres.inactive_modal')
 
 @endsection
 
@@ -154,7 +169,7 @@
 
             $.get(url, function(data, status) {
                 let equipments = data.data
-                //  get value of project_equipment from controller 
+                //  get value of project_equipment from controller
                 let project_equipment = "{{ $project_equipment }}"
 
                 let filtered_equipments = []

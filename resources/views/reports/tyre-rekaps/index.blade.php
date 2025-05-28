@@ -30,6 +30,7 @@
             <th rowspan="2">Price</th>
             <th colspan="2" class="text-center">Target</th>
             <th colspan="2" class="text-center">Realization</th>
+            <th rowspan="2">Status</th>
             <th></th>
           </tr>
           <tr>
@@ -81,6 +82,7 @@
         {data: 'cph_target'},
         {data: 'hm_real'},
         {data: 'cph_real'},
+        {data: 'is_active', className: 'text-center'},
         {data: 'action', orderable: false, searchable: false},
       ],
       fixedHeader: true,

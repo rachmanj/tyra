@@ -23,6 +23,7 @@
             <th>hours_target</th>
             <th>accumulated_hm</th>
             <th>waranty_exp_date</th>
+            <th>status</th>
             <th>created_by</th>
             <th>created_at</th>
         </tr>
@@ -52,6 +53,13 @@
                 <td>{{ $tyre->hours_target }}</td>
                 <td>{{ $tyre->accumulated_hm }}</td>
                 <td>{{ $tyre->waranty_exp_date ? date('d-M-Y', strtotime($tyre->waranty_exp_date)) : 'n/a' }}</td>
+                <td>
+                    @if($tyre->is_active == 1)
+                        Active
+                    @else
+                        Inactive
+                    @endif
+                </td>
                 <td>{{ $tyre->user->name }}</td>
                 <td>{{ $tyre->created_at ? date('d-M-Y', strtotime($tyre->created_at)) : 'n/a' }}</td>
         @endforeach
