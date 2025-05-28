@@ -66,6 +66,25 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
+                                    <label for="po_no">PO Number</label>
+                                    <input type="text" class="form-control" id="po_no" name="po_no">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="supplier">Supplier</label>
+                                    <select class="form-control select2bs4" id="supplier" name="supplier">
+                                        <option value="">-- Select Supplier --</option>
+                                        @foreach ($suppliers as $supplier)
+                                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
                                     <label for="status">Status</label>
                                     <select class="form-control select2bs4" id="status" name="status">
                                         <option value="">-- Select Status --</option>
@@ -76,20 +95,13 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="po_no">PO Number</label>
-                                    <input type="text" class="form-control" id="po_no" name="po_no">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="supplier">Supplier</label>
-                                    <select class="form-control select2bs4" id="supplier" name="supplier">
-                                        <option value="">-- Select Supplier --</option>
-                                        @foreach ($suppliers as $supplier)
-                                            <option value="{{ $supplier->id }}">{{ $supplier->name }}</option>
-                                        @endforeach
+                                    <label for="inactive_reason">Inactive Reason</label>
+                                    <select class="form-control select2bs4" id="inactive_reason" name="inactive_reason"
+                                        disabled>
+                                        <option value="">-- Select Inactive Reason --</option>
+                                        <option value="Scrap">Scrap</option>
+                                        <option value="Breakdown">Breakdown</option>
+                                        <option value="Repair">Repair</option>
                                     </select>
                                 </div>
                             </div>
@@ -175,6 +187,38 @@
                 width: '100%'
             });
 
+            // Handle status change to enable/disable inactive reason
+            $('#status').on('select2:select select2:unselect', function(e) {
+                var statusValue = $(this).val();
+                var inactiveReasonSelect = $('#inactive_reason');
+
+                if (statusValue === '0') { // Inactive
+                    inactiveReasonSelect.prop('disabled', false);
+                    inactiveReasonSelect.select2('enable');
+                } else {
+                    inactiveReasonSelect.prop('disabled', true);
+                    inactiveReasonSelect.val('').trigger('change'); // Clear selection
+                    inactiveReasonSelect.select2('disable');
+                }
+            });
+
+            // Also handle regular change event for fallback
+            $('#status').on('change', function(e) {
+                if (!e.originalEvent) return; // Skip programmatic changes
+
+                var statusValue = $(this).val();
+                var inactiveReasonSelect = $('#inactive_reason');
+
+                if (statusValue === '0') { // Inactive
+                    inactiveReasonSelect.prop('disabled', false);
+                    inactiveReasonSelect.select2('enable');
+                } else {
+                    inactiveReasonSelect.prop('disabled', true);
+                    inactiveReasonSelect.val('').trigger('change'); // Clear selection
+                    inactiveReasonSelect.select2('disable');
+                }
+            });
+
             // Initialize DataTable with deferLoading
             var table = $("#search-results-table").DataTable({
                 processing: true,
@@ -190,6 +234,7 @@
                         d.po_no = $('#po_no').val();
                         d.project = $('#project').val();
                         d.status = $('#status').val();
+                        d.inactive_reason = $('#inactive_reason').val();
                     }
                 },
                 columnDefs: [{
@@ -265,10 +310,23 @@
             });
 
             // Handle reset button
-            $('#search-form button[type="reset"]').click(function() {
-                $(this).closest('form').find("input[type=text], select").val("");
-                // Reset the select2 elements
-                $('#project, #status, #brand, #pattern, #supplier').val(null).trigger('change');
+            $('#search-form button[type="reset"]').click(function(e) {
+                e.preventDefault();
+
+                // Clear all form inputs
+                $(this).closest('form').find("input[type=text]").val("");
+
+                // Reset the select2 elements one by one
+                $('#project').val(null).trigger('change');
+                $('#brand').val(null).trigger('change');
+                $('#pattern').val(null).trigger('change');
+                $('#supplier').val(null).trigger('change');
+                $('#status').val(null).trigger('change');
+                $('#inactive_reason').val(null).trigger('change');
+
+                // Disable inactive reason after reset
+                $('#inactive_reason').prop('disabled', true).select2('disable');
+
                 // Clear the table and show initial message
                 $('#search-results-table tbody').html(
                     '<tr><td colspan="10" class="text-center">Please click search to view data</td></tr>'

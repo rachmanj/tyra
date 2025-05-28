@@ -71,9 +71,16 @@ class ReportController extends Controller
                 $rtd2 = $lastTransaction ? $lastTransaction->rtd2 : "n/a";
                 return "$rtd1 | $rtd2";
             })
+            ->addColumn('is_active', function($tyre) {
+                if($tyre->is_active == '1'){
+                    return '<span class="badge badge-success">Active</span>';
+                } elseif($tyre->is_active == '0'){
+                    return '<span class="badge badge-danger">Inactive</span>';
+                }
+            })
             ->addIndexColumn()
             ->addColumn('action', 'reports.tyre-rekaps.action')
-            ->rawColumns(['action'])
+            ->rawColumns(['action','is_active'])
             ->toJson();
     }
 

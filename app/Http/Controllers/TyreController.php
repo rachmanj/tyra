@@ -235,22 +235,69 @@ class TyreController extends Controller
     {
         $tyre = Tyre::find($id);
 
-        if ($tyre->is_active == 1) {
-            $tyre->is_active = 0;
-        } else {
-            $tyre->is_active = 1;
+        if (!$tyre) {
+            return redirect()->back()->with('error', 'Tyre not found');
         }
-        $tyre->save();
+
+        // If activating (from inactive to active), clear inactive reason
+        if ($tyre->is_active == 0) {
+            $tyre->update([
+                'is_active' => 1,
+                'inactive_reason' => null,
+                'inactive_date' => null,
+                'inactive_notes' => null,
+            ]);
+
+            ActivityLog::create([
+                'user_id' => auth()->user()->id,
+                'model_name' => 'Tyre',
+                'model_id' => $id,
+                'activity' => "Tyre activated successfully",
+            ]);
+
+            return redirect()->route('tyres.show', $id)->with('success', 'Tyre activated successfully.');
+        }
+
+        // If trying to deactivate, redirect to inactive form
+        return redirect()->route('tyres.show', $id)->with('info', 'Please use the inactive button to deactivate tyre with reason.');
+    }
+
+    public function inactive(Request $request, $id)
+    {
+        $request->validate([
+            'inactive_reason' => 'required|in:Scrap,Breakdown,Repair',
+            'inactive_notes' => 'nullable|string|max:1000',
+        ]);
+
+        $tyre = Tyre::find($id);
+
+        if (!$tyre) {
+            return redirect()->back()->with('error', 'Tyre not found');
+        }
+
+        // Check if tyre is currently ON equipment
+        $last_transaction = app(ToolController::class)->getLastTransaction($tyre->id);
+        if ($last_transaction && $last_transaction->tx_type == 'ON') {
+            return redirect()->back()->with('error', 'Cannot deactivate tyre that is currently installed on equipment. Please remove it first.');
+        }
+
+        $tyre->update([
+            'is_active' => 0,
+            'inactive_reason' => $request->inactive_reason,
+            'inactive_date' => now(),
+            'inactive_notes' => $request->inactive_notes,
+        ]);
 
         // create activity log
         ActivityLog::create([
             'user_id' => auth()->user()->id,
             'model_name' => 'Tyre',
             'model_id' => $id,
-            'activity' => "Tyre activation status changed to " . ($tyre->is_active == 1 ? 'active' : 'inactive'),
+            'activity' => "Tyre deactivated with reason: {$request->inactive_reason}" .
+                ($request->inactive_notes ? " - Notes: {$request->inactive_notes}" : ""),
         ]);
 
-        return redirect()->route('tyres.show', $id)->with('success', 'Tyre activation status changed successfully.');
+        return redirect()->route('tyres.show', $id)->with('success', 'Tyre deactivated successfully.');
     }
 
     public function transaction_destroy($transaction_id)
@@ -396,9 +443,12 @@ class TyreController extends Controller
                 return $tyre->price && $tyre->hours_target ? number_format($tyre->price / $tyre->hours_target, 0) : "n/a";
             })
             ->editColumn('is_active', function ($tyre) {
-                return $tyre->is_active == 1
-                    ? '<span class="badge badge-success">Active</span>'
-                    : '<span class="badge badge-danger">Inactive</span>';
+                if ($tyre->is_active == 1) {
+                    return '<span class="badge badge-success">Active</span>';
+                } else {
+                    $reason = $tyre->inactive_reason ? " ({$tyre->inactive_reason})" : '';
+                    return '<span class="badge badge-danger" title="' . ($tyre->inactive_notes ?? '') . '">Inactive' . $reason . '</span>';
+                }
             })
             ->addColumn('unit_no', function ($tyre) {
                 $last_transaction = $this->toolController->getLastTransaction($tyre->id);
@@ -491,9 +541,12 @@ class TyreController extends Controller
                 return number_format($tyre->price, 0, ',', '.');
             })
             ->addColumn('is_active', function ($tyre) {
-                return $tyre->is_active ?
-                    '<span class="badge badge-success">Active</span>' :
-                    '<span class="badge badge-danger">Inactive</span>';
+                if ($tyre->is_active == 1) {
+                    return '<span class="badge badge-success">Active</span>';
+                } else {
+                    $reason = $tyre->inactive_reason ? " ({$tyre->inactive_reason})" : '';
+                    return '<span class="badge badge-danger" title="' . ($tyre->inactive_notes ?? '') . '">Inactive' . $reason . '</span>';
+                }
             })
             ->addColumn('action', function ($tyre) {
                 $html = '<a href="' . route('tyres.edit', $tyre->id) . '" class="btn btn-xs btn-info" title="Edit Tyre">
@@ -512,7 +565,7 @@ class TyreController extends Controller
                     if ($tyre->transactions->count() > 0) {
                         $html .= '<button class="btn btn-xs btn-danger" disabled>delete</button>';
                     } else {
-                        $html .= '<button type="submit" class="btn btn-xs btn-danger" 
+                        $html .= '<button type="submit" class="btn btn-xs btn-danger"
                                     onclick="return confirm(\'Are you sure you want delete this record?\')"
                                 >delete</button>';
                     }
@@ -544,6 +597,9 @@ class TyreController extends Controller
                 }
                 if ($request->filled('po_no')) {
                     $query->where('po_no', 'like', '%' . $request->po_no . '%');
+                }
+                if ($request->filled('inactive_reason')) {
+                    $query->where('inactive_reason', $request->inactive_reason);
                 }
             })
             ->toJson();
