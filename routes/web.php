@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EquipmentController;
 use App\Http\Controllers\LoginController;
@@ -50,6 +51,12 @@ Route::middleware('auth')->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::resource('permissions', PermissionController::class);
+
+    // ANNOUNCEMENTS
+    Route::prefix('announcements')->name('announcements.')->group(function () {
+        Route::put('toggle-status/{announcement}', [AnnouncementController::class, 'toggleStatus'])->name('toggle_status');
+    });
+    Route::resource('announcements', AnnouncementController::class);
 
     // DASHBOARD
     Route::prefix('dashboard')->name('dashboard.')->group(function () {

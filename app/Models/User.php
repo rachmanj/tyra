@@ -43,4 +43,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Department::class, 'department_id', 'id');
     }
+
+    /**
+     * Relationship dengan Announcement (User yang membuat announcement)
+     */
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class, 'created_by');
+    }
 }

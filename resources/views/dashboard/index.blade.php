@@ -9,6 +9,9 @@
 @endsection
 
 @section('content')
+    {{-- ANNOUNCEMENTS --}}
+    @include('dashboard.announcements')
+
     <div class="row">
         @include('dashboard.mini_boxes')
     </div>
