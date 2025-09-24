@@ -265,7 +265,7 @@ class TyreController extends Controller
     public function inactive(Request $request, $id)
     {
         $request->validate([
-            'inactive_reason' => 'required|in:Scrap,Breakdown,Repair',
+            'inactive_reason' => 'required|in:Scrap,Breakdown,Repair,Consignment,Rotable',
             'inactive_notes' => 'nullable|string|max:1000',
         ]);
 

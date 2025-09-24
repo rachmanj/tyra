@@ -19,6 +19,8 @@
                             <option value="Scrap">Scrap</option>
                             <option value="Breakdown">Breakdown</option>
                             <option value="Repair">Repair</option>
+                            <option value="Consignment">Consignment</option>
+                            <option value="Rotable">Rotable</option>
                         </select>
                     </div>
                     <div class="form-group">
