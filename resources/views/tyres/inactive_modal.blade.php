@@ -21,6 +21,7 @@
                             <option value="Repair">Repair</option>
                             <option value="Consignment">Consignment</option>
                             <option value="Rotable">Rotable</option>
+                            <option value="Spare">Spare</option>
                         </select>
                     </div>
                     <div class="form-group">
