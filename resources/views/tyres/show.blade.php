@@ -176,18 +176,30 @@
                 if (project_equipment == 'all') {
                     filtered_equipments = equipments
                 } else {
-                    filtered_equipments = equipments.filter(equipment => equipment.project ==
-                        project_equipment)
+                    filtered_equipments = equipments.filter(equipment =>
+                        equipment.project_code == project_equipment || equipment.project ==
+                        project_equipment
+                    )
                 }
 
                 let select = document.getElementById('unit_no')
 
                 for (let i = 0; i < filtered_equipments.length; i++) {
                     let equipment = filtered_equipments[i]
+
+                    // Pastikan properti ada atau berikan nilai default
+                    const unitNo = equipment.unit_no || ''
+                    const plantGroup = equipment.plant_group || 'n/a'
+                    const model = equipment.model || 'n/a'
+
+                    // Skip jika unitNo kosong atau tidak valid
+                    if (!unitNo) {
+                        continue
+                    }
+
                     let option = document.createElement('option')
-                    option.value = equipment.unit_code
-                    option.text = equipment.unit_code + ' - ' + equipment.plant_group + ' - ' + equipment
-                        .model
+                    option.value = unitNo
+                    option.text = unitNo + ' - ' + plantGroup + ' - ' + model
                     select.add(option)
                 }
 
