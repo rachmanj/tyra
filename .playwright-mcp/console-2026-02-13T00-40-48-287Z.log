@@ -1,0 +1,1 @@
+[   17607ms] [ERROR] Failed to create chart: can't acquire context from the given item @ http://localhost:8000/adminlte/plugins/chart.js/Chart.min.js:6
