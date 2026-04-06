@@ -17,6 +17,10 @@
     </div>
 
     <div class="row">
+        @include('dashboard.chart_card')
+    </div>
+
+    <div class="row">
         <div class="col-12">
             @include('dashboard.rekap')
         </div>

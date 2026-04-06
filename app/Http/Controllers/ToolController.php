@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
 
 class ToolController extends Controller
@@ -107,6 +108,11 @@ class ToolController extends Controller
                 'location' => "Melak"
             ],
             [
+                'project_code' => "025C",
+                'bowheer' => "Solusi Bangun Indonesia, PT",
+                'location' => "Cilacap"
+            ],
+            [
                 'project_code' => "APS",
                 'bowheer' => "ARKA Project Support",
                 'location' => "Kariangau"
@@ -125,7 +131,7 @@ class ToolController extends Controller
 
         try {
             $tyre_id = $request->tyre_id;
-           
+
             // Validate tyre_id
             if (!$tyre_id) {
                 return response()->json([
@@ -141,9 +147,9 @@ class ToolController extends Controller
                 'current_hm' => $last_transaction ? $last_transaction->hm : 0
             ]);
         } catch (\Exception $e) {
-            \Log::error('Error in getLastHm: ' . $e->getMessage());
-            \Log::error('Tyre ID: ' . $request->tyre_id);
-            \Log::error('Stack trace: ' . $e->getTraceAsString());
+            Log::error('Error in getLastHm: ' . $e->getMessage());
+            Log::error('Tyre ID: ' . $request->tyre_id);
+            Log::error('Stack trace: ' . $e->getTraceAsString());
 
             return response()->json([
                 'success' => false,

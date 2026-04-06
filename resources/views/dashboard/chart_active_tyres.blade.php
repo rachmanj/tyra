@@ -10,7 +10,8 @@
         var mode = 'index'
         var intersect = true
 
-        let activeTyres = {!! json_encode($active_tyre_by_project) !!};
+        let activeTyres = {!! json_encode($active_tyre_by_project) !!} || [];
+        activeTyres = activeTyres.filter(function (item) { return item && item.current_project; });
 
         let projects = activeTyres.map(function (item) {
             return item.current_project;
@@ -20,12 +21,10 @@
             return item.total;
         });
 
-        console.log(activeTyresCount);
-
         // THE CHART
         let $activeTyresChart = $('#active-tyres-chart');
-        // eslint-disable-next-line no-unused-vars
-        let activeTyresChart = new Chart($activeTyresChart, {
+        if ($activeTyresChart.length) {
+            new Chart($activeTyresChart, {
             type: 'bar',
             data: {
                 labels: projects,
@@ -86,8 +85,7 @@
                     }]
                 }
             }
+        });
         }
-
-    )
-})
+    })
 </script>

@@ -3,7 +3,8 @@
         <h3 class="card-title">Rekap Data by Brand by Project</h3>
     </div>
     <div class="card-body p-0">
-        <table class="table table-sm">
+        <div class="table-responsive">
+            <table class="table table-sm">
             <thead>
                 <tr>
                     <td rowspan="2" class="align-middle border-bottom">
@@ -43,5 +44,6 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     </div>
 </div>
