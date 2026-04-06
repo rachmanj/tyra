@@ -20,6 +20,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-8">
+                            {{ $project_equipment }}
                             @include('tyres.show_info')
                         </div>
                         <div class="col-4">
