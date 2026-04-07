@@ -112,28 +112,32 @@ class TransactionController extends Controller
 
     public function updateHm(Request $request, $id)
     {
+        $request->validate([
+            'last_hm' => 'required|numeric|min:0',
+            'rtd1' => 'required|numeric',
+            'rtd2' => 'required|numeric',
+        ]);
+
+        $tyre = Tyre::findOrFail($id);
+        $accumulated_hm_before_update = $tyre->accumulated_hm;
+        $last_transaction = app(ToolController::class)->getLastTransaction($id);
+
+        if (!$last_transaction) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No transaction found for this tyre. Cannot update HM.',
+            ], 422);
+        }
+
+        if ($request->last_hm < $last_transaction->hm) {
+            return response()->json([
+                'success' => false,
+                'message' => 'New HM cannot be less than last transaction HM',
+            ], 422);
+        }
+
         try {
             DB::beginTransaction();
-
-            // Validate request
-            $request->validate([
-                'last_hm' => 'required|numeric|min:0'
-            ]);
-
-            // Get the tyre
-            $tyre = Tyre::findOrFail($id);
-            $accumulated_hm_before_update = $tyre->accumulated_hm;
-
-            // Get last transaction
-            $last_transaction = app(ToolController::class)->getLastTransaction($id);
-
-            // Validate HM is not less than last transaction
-            if ($last_transaction && $request->last_hm < $last_transaction->hm) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'New HM cannot be less than last transaction HM'
-                ], 422);
-            }
 
             $removal_reason_id = RemovalReason::where('description', 'HM UPDATED')->first()?->id ?? null;
 
@@ -145,10 +149,12 @@ class TransactionController extends Controller
                 'tx_type' => 'UHM',
                 'position' => $last_transaction->position,
                 'hm' => $request->last_hm,
-                'rtd1' => $last_transaction->rtd1,
-                'rtd2' => $last_transaction->rtd2,
+                'rtd1' => $request->rtd1,
+                'rtd2' => $request->rtd2,
                 'project' => $last_transaction->project,
-                'remark' => 'HM updated from ' . ($last_transaction ? $last_transaction->hm : 0) . ' to ' . $request->last_hm . ' by ' . auth()->user()->name,
+                'remark' => 'HM updated from ' . $last_transaction->hm . ' to ' . $request->last_hm
+                    . '; RTD1/RTD2 updated to ' . $request->rtd1 . ' / ' . $request->rtd2
+                    . ' by ' . auth()->user()->name,
                 'removal_reason_id' => $removal_reason_id,
                 'created_by' => auth()->id()
             ]);
