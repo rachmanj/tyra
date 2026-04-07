@@ -20,7 +20,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-8">
-                            {{ $project_equipment }}
+                            {{-- {{ $project_equipment }} --}}
                             @include('tyres.show_info')
                         </div>
                         <div class="col-4">
@@ -40,15 +40,19 @@
                             @can('update_last_hm')
                                 <div class="form-group mt-3">
                                     <label for="last_hm">Update Tyre HM</label>
-                                    <div class="input-group">
-                                        <input type="number" class="form-control" id="last_hm" name="last_hm" min="0"
-                                            autocomplete="off" placeholder="Enter new HM value">
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-sm btn-primary" id="update-hm"
-                                                data-tyre-id="{{ $tyre->id }}"
-                                                data-brand-id="{{ $tyre->brand_id }}">Update</button>
-                                        </div>
-                                    </div>
+                                    <input type="number" class="form-control mb-2" id="last_hm" name="last_hm" min="0"
+                                        step="any" autocomplete="off" placeholder="Enter new HM value">
+                                    <label for="update_rtd1" class="mb-0">RTD1</label>
+                                    <input type="number" class="form-control form-control mb-2" id="update_rtd1"
+                                        name="update_rtd1" step="any" autocomplete="off"
+                                        placeholder="Required with HM update">
+                                    <label for="update_rtd2" class="mb-0">RTD2</label>
+                                    <input type="number" class="form-control form-control mb-2" id="update_rtd2"
+                                        name="update_rtd2" step="any" autocomplete="off"
+                                        placeholder="Required with HM update">
+                                    <button type="button" class="btn btn btn-primary btn-block" id="update-hm"
+                                        data-tyre-id="{{ $tyre->id }}" data-brand-id="{{ $tyre->brand_id }}">Update</button>
+                                    <small class="form-text text-muted">HM update requires RTD1 and RTD2.</small>
                                 </div>
                             @endcan
                         </div>
@@ -301,9 +305,15 @@
 
                 const tyreId = $(this).data('tyre-id');
                 const lastHm = $('#last_hm').val();
+                const rtd1 = $('#update_rtd1').val();
+                const rtd2 = $('#update_rtd2').val();
 
-                if (!lastHm) {
+                if (!lastHm || lastHm === '') {
                     alert('Please enter HM value');
+                    return;
+                }
+                if (rtd1 === '' || rtd1 === null || rtd2 === '' || rtd2 === null) {
+                    alert('Please enter RTD1 and RTD2. HM cannot be updated without both values.');
                     return;
                 }
 
@@ -329,7 +339,7 @@
                             }
 
                             // If validation passes, proceed with update
-                            updateTyreHm(tyreId, lastHm);
+                            updateTyreHm(tyreId, lastHm, rtd1, rtd2);
                         }
                     },
                     error: function(xhr, status, error) {
@@ -339,10 +349,10 @@
             });
 
             // Function to update tyre HM
-            function updateTyreHm(tyreId, lastHm) {
+            function updateTyreHm(tyreId, lastHm, rtd1, rtd2) {
                 // Add confirmation dialog
                 if (!confirm(
-                        `Are you sure you want to update the HM to ${formatNumber(lastHm)}?`
+                        `Update HM to ${formatNumber(lastHm)}, RTD1 ${formatNumber(rtd1)}, RTD2 ${formatNumber(rtd2)}?`
                     )) {
                     return;
                 }
@@ -352,6 +362,8 @@
                     type: 'POST',
                     data: {
                         last_hm: lastHm,
+                        rtd1: rtd1,
+                        rtd2: rtd2,
                         _token: '{{ csrf_token() }}'
                     },
                     headers: {
@@ -364,13 +376,22 @@
                             $('#tyre-cph').text(formatNumber(response.tyre_cph, 2));
                             $('#avg-cph').text(formatNumber(response.avg_cph, 2));
                             $('#last_hm').val('');
+                            $('#update_rtd1').val('');
+                            $('#update_rtd2').val('');
                             $('#table-histories').DataTable().ajax.reload();
                             alert('HM updated successfully');
                         }
                     },
                     error: function(xhr) {
                         if (xhr.status === 422) {
-                            alert(xhr.responseJSON.message);
+                            const j = xhr.responseJSON;
+                            if (j.errors) {
+                                const first = Object.values(j.errors)[0];
+                                alert(Array.isArray(first) ? first[0] : (j.message ||
+                                    'Validation failed'));
+                            } else {
+                                alert(j.message || 'Validation failed');
+                            }
                         } else {
                             alert(xhr.responseJSON?.message || 'Error updating HM');
                         }
